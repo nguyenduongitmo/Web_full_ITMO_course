@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-wrapper">
+        <%- include('../partials/header', { isLoggedIn, username, currentPath }) %>
+        
+        <main class="main">
+            <div class="container">
+                <section class="section contact-header">
+                    <div class="section__header">
+                        <h1 class="section__title">Liên hệ với chúng tôi</h1>
+                        <p class="section__subtitle">Chúng tôi sẵn sàng hỗ trợ bạn 24/7</p>
+                    </div>
+                </section>
+
+                <div class="contact-grid">
+                    <div class="contact-info">
+                        <h3>Thông tin liên hệ</h3>
+                        <div class="contact-item">
+                            <span class="contact-label">Địa chỉ</span>
+                            <p>Nevsky Prospekt, Saint Petersburg, Nga</p>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-label">Email</span>
+                            <p><a href="mailto:<%= email %>"><%= email %></a></p>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-label">Điện thoại</span>
+                            <p><a href="tel:<%= phone %>"><%= phone %></a></p>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-label">Giờ làm việc</span>
+                            <p>8:00 - 20:00 (Giờ Nga)</p>
+                        </div>
+                        <div class="contact-item contact-social">
+                            <span class="contact-label">Mạng xã hội</span>
+                            <div class="social-links">
+                                <a href="#">Facebook</a>
+                                <a href="#">Instagram</a>
+                                <a href="#">Telegram</a>
+                                <a href="#">YouTube</a>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-image">
+                            <img src="/public/images/vanphong.jpg" alt="Văn phòng ROYAL TRAVEL tại Saint Petersburg">
+    
+                        </div>
+                    </div>
+                    
+                    <div class="contact-form-wrapper">
+                        <h3>Gửi yêu cầu tư vấn</h3>
+                        <form id="contact-form" class="contact-form">
+                            <div class="form-group">
+                                <label>Họ tên *</label>
+                                <input type="text" name="name" placeholder="Nhập họ tên của bạn" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Email *</label>
+                                <input type="email" name="email" placeholder="Nhập email của bạn" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Số điện thoại</label>
+                                <input type="tel" name="phone" placeholder="Nhập số điện thoại">
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Điểm đến</label>
+                                    <select name="destination">
+                                        <option value="">-- Chọn điểm đến --</option>
+                                        <option value="moscow">Moscow</option>
+                                        <option value="st_petersburg">Saint Petersburg</option>
+                                        <option value="sochi">Sochi</option>
+                                        <option value="vladivostok">Vladivostok</option>
+                                        <option value="kazan">Kazan</option>
+                                        <option value="murmansk">Murmansk</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Ngân sách</label>
+                                    <select name="budget">
+                                        <option value="">-- Chọn ngân sách --</option>
+                                        <option value="under500">Dưới 500 USD</option>
+                                        <option value="500-1000">500 - 1000 USD</option>
+                                        <option value="1000-2000">1000 - 2000 USD</option>
+                                        <option value="above2000">Trên 2000 USD</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Tin nhắn *</label>
+                                <textarea name="message" rows="5" placeholder="Mô tả chi tiết yêu cầu của bạn..." required></textarea>
+                            </div>
+                            <div class="form-group checkbox">
+                                <label>
+                                    <input type="checkbox" name="subscribe" checked>
+                                    Nhận thông tin khuyến mãi qua email
+                                </label>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Gửi yêu cầu tư vấn</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- PHẦN FEEDBACK - VẪN Ở TRANG LIÊN HỆ -->
+                <section class="section feedback-section">
+                    <div class="section__header">
+                        <h2 class="section__title">Đánh giá từ khách hàng</h2>
+                        <p class="section__subtitle">Chia sẻ trải nghiệm của bạn với ROYAL TRAVEL</p>
+                    </div>
+                    
+                    <div class="feedback-grid">
+                        <div class="feedback-form-wrapper">
+                            <h3>Gửi đánh giá của bạn</h3>
+                            <form id="feedback-form" class="feedback-form">
+                                <div class="form-group">
+                                    <label>Họ tên *</label>
+                                    <input type="text" name="name" placeholder="Nhập họ tên của bạn" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Email *</label>
+                                    <input type="email" name="email" placeholder="Nhập email của bạn" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Đánh giá sao</label>
+                                    <div class="star-rating">
+                                        <input type="radio" name="rating" value="5" id="star5">
+                                        <label for="star5">★</label>
+                                        <input type="radio" name="rating" value="4" id="star4">
+                                        <label for="star4">★</label>
+                                        <input type="radio" name="rating" value="3" id="star3">
+                                        <label for="star3">★</label>
+                                        <input type="radio" name="rating" value="2" id="star2">
+                                        <label for="star2">★</label>
+                                        <input type="radio" name="rating" value="1" id="star1">
+                                        <label for="star1">★</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Ý kiến đánh giá *</label>
+                                    <textarea name="comment" rows="4" placeholder="Chia sẻ trải nghiệm của bạn..." required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
+                            </form>
+                        </div>
+                        
+                        <div class="feedback-list-wrapper">
+                            <h3>Đánh giá gần đây</h3>
+                            <ul id="feedback-list" class="feedback-list">
+                                <li class="empty-state">
+                                    <p>Chưa có đánh giá nào. Hãy là người đầu tiên!</p>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <template id="feedback-template">
+                    <li class="feedback__item">
+                        <div class="feedback__item-header">
+                            <span class="feedback__name"></span>
+                            <span class="feedback__email"></span>
+                            <span class="feedback__rating"></span>
+                        </div>
+                        <p class="feedback__comment"></p>
+                        <div class="feedback__item-actions">
+                            <button class="btn-edit">Sửa</button>
+                            <button class="btn-delete">Xóa</button>
+                        </div>
+                    </li>
+                </template>
+
+                <!-- Đánh giá mẫu từ API -->
+<section class="section api-feedback-section">
+    <h2 class="section__title">Đánh giá mẫu</h2>
+    <div id="api-preloader" class="preloader" style="display: none;">
+        <div class="spinner"></div>
+        <p>Đang tải đánh giá...</p>
+    </div>
+    <div id="api-error" class="error-message" style="display: none;"></div>
+    <div id="api-feedback-list" class="feedback-list"></div>
+    <!-- Nút có margin-top để tạo khoảng cách -->
+    <button id="reload-api-btn" class="btn btn-primary" style="margin-top: 24px; display: block; margin-left: auto; margin-right: auto;">
+        Tải thêm đánh giá
+    </button>
+</section>
+
+<template id="api-feedback-template">
+    <div class="feedback__item api-item">
+        <p><strong class="api-name"></strong> (<span class="api-email"></span>)</p>
+        <p class="api-body"></p>
+        <p class="api-rating" style="color: #f59e0b; font-size: 16px; letter-spacing: 2px;"></p>
+        <small class="api-post-id">Mã bài viết: <span></span></small>
+    </div>
+</template>
+            </div>
+        </main>
+        
+        <%- include('../partials/footer') %>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="/js/script.js" defer></script>
+    <script src="/js/swiper-init.js" defer></script>
+    <script src="/js/feedback.js" defer></script>
+    <script src="/js/api-feedback.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<header class="header">
+    <div class="container">
+        <div class="header__inner">
+            <a href="/" class="header__logo">
+                <img src="/images/logo.jpg" alt="ROYAL TRAVEL">
+                <span class="header__brand">ROYAL TRAVEL</span>
+            </a>
+            
+            <div class="header__right">
+                <nav class="header__nav">
+                    <ul class="header__menu">
+                        <li class="header__menu-item">
+                            <a href="/" class="<%= currentPath === '/' ? 'active' : '' %>">Trang chủ</a>
+                        </li>
+                        <li class="header__menu-item">
+                            <a href="/tours" class="<%= currentPath === '/tours' ? 'active' : '' %>">Tour du lịch</a>
+                        </li>
+                        <li class="header__menu-item">
+                            <a href="/contact" class="<%= currentPath === '/contact' ? 'active' : '' %>">Liên hệ</a>
+                        </li>
+                    </ul>
+                </nav>
+                
+                <!-- KHÔNG CÓ VIỀN BAO QUANH -->
+                <div class="header__auth">
+                    <% if (isLoggedIn) { %>
+                        <span class="header__user">Xin chào, <strong><%= username %></strong></span>
+                        <a href="/logout" class="btn btn-logout">Đăng xuất</a>
+                    <% } else { %>
+                        <a href="/login" class="btn btn-login">Đăng nhập</a>
+                        <a href="/register" class="btn btn-register">Đăng ký</a>
+                    <% } %>
+                </div>
+            </div>
+            
+            <button class="header__toggle" id="mobileToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </div>
+</header>

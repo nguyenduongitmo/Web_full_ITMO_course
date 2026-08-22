@@ -1,0 +1,28 @@
+<section class="search-section">
+    <div class="search-section__container">
+        <h2 class="search-section__title">Bạn muốn khám phá điểm đến nào?</h2>
+        <p class="search-section__subtitle">Nhập tên thành phố để tìm tour phù hợp</p>
+        
+        <form class="search-form" action="/tours" method="GET">
+            <div class="search-form__group">
+                <input 
+                    type="text" 
+                    class="search-form__input" 
+                    name="q" 
+                    placeholder="Nhập tên địa điểm (ví dụ: Moscow, Saint Petersburg...)"
+                    value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>"
+                >
+                <button type="submit" class="search-form__btn">Tìm kiếm</button>
+            </div>
+            <div class="search-form__suggestions">
+                <span>Gợi ý:</span>
+                <a href="/tours?q=Moscow">Moscow</a>
+                <a href="/tours?q=Saint%20Petersburg">Saint Petersburg</a>
+                <a href="/tours?q=Sochi">Sochi</a>
+                <a href="/tours?q=Kazan">Kazan</a>
+                <a href="/tours?q=Vladivostok">Vladivostok</a>
+                <a href="/tours?q=Murmansk">Murmansk</a>
+            </div>
+        </form>
+    </div>
+</section>

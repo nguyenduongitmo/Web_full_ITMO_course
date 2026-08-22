@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-wrapper">
+        <%- include('../partials/header', { isLoggedIn, username, currentPath }) %>
+        
+        <% if (showBanner !== false) { %>
+            <%- include('../partials/banner') %>
+        <% } %>
+        <%- include('../partials/search', { searchQuery: searchQuery }) %>
+        <main class="main">
+            <div class="container">
+                
+
+                <section class="section about-section">
+                    <div class="section__header">
+                        <h2 class="section__title">Về ROYAL TRAVEL</h2>
+                        <p class="section__subtitle">Đồng hành cùng bạn trên mọi hành trình</p>
+                    </div>
+                    <div class="about-grid">
+                        <div class="about-card">
+                            <h3>Sứ mệnh</h3>
+                            <p><%= mission %></p>
+                        </div>
+                        <div class="about-card">
+                            <h3>Tầm nhìn</h3>
+                            <p><%= vision %></p>
+                        </div>
+                        <div class="about-card">
+                            <h3>Giá trị cốt lõi</h3>
+                            <ul class="about-values">
+                                <% coreValues.forEach(function(value) { %>
+                                    <li><%- value %></li>
+                                <% }); %>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="section featured-section">
+                    <div class="section__header">
+                        <h2 class="section__title">Tour nổi bật</h2>
+                        <p class="section__subtitle">Những hành trình đáng nhớ nhất dành cho bạn</p>
+                    </div>
+                    <div class="tour__grid">
+                        <% featuredTours.forEach(function(tour) { %>
+                            <article class="tour__card">
+                                <div class="tour__card-image">
+                                    <img src="/images/<%= tour.image %>" alt="<%= tour.name %>">
+                                    <span class="tour__badge">Nổi bật</span>
+                                </div>
+                                <div class="tour__card-body">
+                                    <h3 class="tour__title"><%= tour.name %></h3>
+                                    <p class="tour__desc"><%= tour.description %></p>
+                                    <div class="tour__card-footer">
+                                        <div class="tour__price">
+                                            <span class="price-amount"><%= tour.price %> USD</span>
+                                            <span class="price-label">/ mỗi người</span>
+                                        </div>
+                                        <div class="tour__duration">
+                                            <%= tour.duration %>
+                                        </div>
+                                    </div>
+                                    <a href="/tours/<%= tour.id %>" class="btn btn-primary btn-block">Xem chi tiết</a>
+                                </div>
+                            </article>
+                        <% }); %>
+                    </div>
+                    <div class="section__footer">
+                        <a href="/tours" class="btn btn-outline">Xem tất cả tour</a>
+                    </div>
+                </section>
+
+                <section class="section info-section">
+                    <div class="section__header">
+                        <h2 class="section__title">Tại sao chọn ROYAL TRAVEL?</h2>
+                    </div>
+                    <div class="info-grid">
+                        <div class="info-card">
+                            <h3>Khám phá văn hóa</h3>
+                            <p>Trải nghiệm nền văn hóa đa dạng của nước Nga</p>
+                        </div>
+                        <div class="info-card">
+                            <h3>Khách sạn cao cấp</h3>
+                            <p>Nghỉ dưỡng tại những khách sạn tốt nhất</p>
+                        </div>
+                        <div class="info-card">
+                            <h3>Ẩm thực đặc sắc</h3>
+                            <p>Thưởng thức ẩm thực Nga tinh tế</p>
+                        </div>
+                        <div class="info-card">
+                            <h3>Hướng dẫn viên chuyên nghiệp</h3>
+                            <p>Đội ngũ hướng dẫn viên giàu kinh nghiệm</p>
+                        </div>
+                    </div>
+                </section>
+
+                <%- include('../partials/notes') %>
+            </div>
+        </main>
+        
+        <%- include('../partials/footer') %>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="/js/script.js" defer></script>
+    <script src="/js/swiper-init.js" defer></script>
+</body>
+</html>

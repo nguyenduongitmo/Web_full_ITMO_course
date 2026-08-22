@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+}
+
+// 1. User (cho auth sau)
+model User {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  name      String
+  password  String    // sẽ dùng cho lab 7
+  role      String     @default("USER")  // giá trị: "USER" hoặc "ADMIN"
+  feedbacks Feedback[]
+  bookings  Booking[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+// 2. Tour (sản phẩm chính)
+model Tour {
+  id          String   @id @default(cuid())
+  name        String
+  image       String
+  description String
+  code        String   @unique  // ví dụ: #ROYAL-01-VN-RU
+  price       Float?            // thêm giá tour
+  duration    String?           // thêm thời gian: "5 ngày 4 đêm"
+  isFeatured  Boolean  @default(false)
+  feedbacks   Feedback[]
+  bookings    Booking[] 
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// 3. Feedback (phản hồi từ khách hàng)
+model Feedback {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  comment   String
+  tourId    String?  // có thể feedback về 1 tour cụ thể
+  tour      Tour?    @relation(fields: [tourId], references: [id])
+  userId    String?  // nếu user đã đăng nhập
+  user      User?    @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+// 4. Booking (đặt tour - cho lab 3,4)
+model Booking {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  tourId      String
+  tour        Tour     @relation(fields: [tourId], references: [id])
+  fullName    String
+  email       String
+  phone       String
+  travelDate  DateTime
+  passengers  Int
+  status      String   @default("PENDING")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// 5. Contact (liên hệ từ form)
+model Contact {
+  id          String   @id @default(cuid())
+  name        String
+  email       String
+  phone       String?
+  interest    String?   // loại tour quan tâm
+  destination String?
+  budget      String?
+  travelDate  String?
+  message     String
+  subscribe   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+}
+

@@ -1,0 +1,347 @@
+@media (max-width: 1024px) {
+    .tour__grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
+    }
+    
+    .info-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+    
+    .about-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
+    }
+}
+
+@media (max-width: 768px) {
+    .header__toggle {
+        display: flex;
+    }
+    
+    .header__right {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        gap: 16px;
+    }
+    
+    .header__nav.open .header__right {
+        display: flex;
+    }
+    
+    .header__nav {
+        width: 100%;
+    }
+    
+    .header__menu {
+        flex-direction: column;
+        width: 100%;
+        gap: 4px;
+    }
+    
+    .header__menu-item a {
+        display: block;
+        padding: 12px 16px;
+        width: 100%;
+        border-radius: 8px;
+        font-size: 15px;
+    }
+    
+    .header__auth {
+        flex-direction: column;
+        width: 100%;
+        gap: 8px;
+        padding-top: 16px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .header__auth .btn {
+        width: 100%;
+        text-align: center;
+    }
+    
+    .banner {
+        height: 420px;
+    }
+    
+    .banner__title {
+        font-size: 32px;
+    }
+    
+    .banner__desc {
+        font-size: 16px;
+    }
+    
+    .banner__btn {
+        padding: 12px 32px;
+        font-size: 15px;
+    }
+    
+    .swiper-button-next,
+    .swiper-button-prev {
+        display: none;
+    }
+    
+    .search-section {
+        padding: 35px 0;
+    }
+    
+    .search-section__title {
+        font-size: 24px;
+    }
+    
+    .search-form__group {
+        flex-direction: column;
+        background: transparent;
+        box-shadow: none;
+        gap: 10px;
+    }
+    
+    .search-form__input {
+        background: white;
+        border-radius: 12px;
+        padding: 14px 18px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .search-form__btn {
+        border-radius: 12px;
+        padding: 14px;
+        width: 100%;
+    }
+    
+    .search-form__suggestions {
+        gap: 6px;
+    }
+    
+    .search-form__suggestions a {
+        font-size: 13px;
+        padding: 3px 12px;
+    }
+    
+    .tour__grid {
+        grid-template-columns: 1fr;
+        max-width: 420px;
+        margin: 0 auto;
+    }
+    
+    .info-grid {
+        grid-template-columns: 1fr 1fr;
+        max-width: 420px;
+        margin: 0 auto;
+    }
+    
+    .about-grid {
+        grid-template-columns: 1fr;
+        max-width: 420px;
+        margin: 0 auto;
+    }
+    
+    .contact-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+    
+    .feedback-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+    
+    .feedback-form-wrapper {
+        padding: 24px 20px;
+    }
+    
+    .feedback__item {
+        padding: 16px 18px;
+    }
+    
+    .feedback__item-header {
+        flex-direction: column;
+        gap: 4px;
+    }
+    
+    .footer__inner {
+        grid-template-columns: 1fr;
+        gap: 28px;
+        text-align: center;
+    }
+    
+    .footer__links li {
+        display: inline-block;
+        padding: 4px 12px;
+    }
+    
+    .footer__contact li {
+        text-align: center;
+    }
+    
+    .section {
+        padding: 35px 0;
+    }
+    
+    .section__title {
+        font-size: 26px;
+    }
+    
+    .section__subtitle {
+        font-size: 15px;
+    }
+    
+    .aside {
+        padding: 18px 20px;
+        margin-top: 20px;
+    }
+    
+    .contact-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+    
+    .contact-item p {
+        text-align: left;
+    }
+    
+    .contact-social .social-links {
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 480px) {
+    .banner {
+        height: 320px;
+    }
+    
+    .banner__title {
+        font-size: 24px;
+    }
+    
+    .banner__desc {
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+    
+    .banner__btn {
+        padding: 10px 24px;
+        font-size: 13px;
+    }
+    
+    .header {
+        padding: 10px 0;
+    }
+    
+    .header__brand {
+        font-size: 16px;
+    }
+    
+    .header__logo img {
+        height: 32px;
+    }
+    
+    .search-section__title {
+        font-size: 20px;
+    }
+    
+    .search-section__subtitle {
+        font-size: 14px;
+    }
+    
+    .search-form__input {
+        font-size: 14px;
+        padding: 12px 16px;
+    }
+    
+    .search-form__btn {
+        font-size: 14px;
+        padding: 12px;
+    }
+    
+    .info-grid {
+        grid-template-columns: 1fr;
+        max-width: 320px;
+    }
+    
+    .tour__card-image {
+        height: 180px;
+    }
+    
+    .tour__card-body {
+        padding: 18px;
+    }
+    
+    .tour__title {
+        font-size: 17px;
+    }
+    
+    .price-amount {
+        font-size: 20px;
+    }
+    
+    .section__title {
+        font-size: 22px;
+    }
+    
+    .btn {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+    
+    .footer {
+        padding: 30px 0 0;
+    }
+    
+    .footer__title {
+        font-size: 16px;
+    }
+    
+    .footer__bottom {
+        font-size: 12px;
+        padding: 16px 0;
+    }
+    
+    .contact-form-wrapper {
+        padding: 20px;
+    }
+    
+    .feedback-form-wrapper {
+        padding: 20px;
+    }
+    
+    .contact-info {
+        padding: 18px;
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.tour__card {
+    animation: fadeIn 0.6s ease forwards;
+}
+
+.tour__card:nth-child(2) { animation-delay: 0.1s; }
+.tour__card:nth-child(3) { animation-delay: 0.2s; }
+.tour__card:nth-child(4) { animation-delay: 0.3s; }
+.tour__card:nth-child(5) { animation-delay: 0.4s; }
+.tour__card:nth-child(6) { animation-delay: 0.5s; }
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #e94560;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #d63851;
+}
