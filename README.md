@@ -1,158 +1,186 @@
-# PROJECT BACK_END_1
+# ROYAL TRAVEL - Backend
+
+[Render](https://web-full-itmo-course.onrender.com) | [NestJS](https://nestjs.com/) | [Prisma](https://prisma.io/) | [PostgreSQL](https://www.postgresql.org/)
+
+Backend for ROYAL TRAVEL - A tourism platform offering tours across Russia. Built with NestJS, Prisma ORM, PostgreSQL, and deployed on Render.
+
+---
 
 ## Description
-Backend for ROYAL Travel - a tourism platform offering tours across Russia. Built with NestJS
+
+ROYAL TRAVEL is an online tour booking platform offering tours across Russia. This backend service handles all business logic, database operations, and serves dynamic web pages using the MVC pattern. The project is built with NestJS - a progressive Node.js framework, uses Prisma ORM for database interaction with PostgreSQL (Render PostgreSQL), and is deployed on Render.
+
+---
 
 ## Author
-  - Name: Nguyen Thi Thuy Duong
-  - Email: nguyenduongitmo@gmail.com
+
+| Information | Details |
+|-------------|---------|
+| Name | Nguyen Thi Thuy Duong |
+| Email | nguyenduongitmo@gmail.com |
+| GitHub | nguyenduongitmo |
+| University | ITMO University, Russia |
+
+---
 
 ## Live Demo
-[MY WEB](https://back-end-1-cgno.onrender.com/tours.html)
 
-## Technologies:
+https://web-full-itmo-course.onrender.com
+
+---
+
+## Technologies
+
 ### Backend
-- **NestJS** - Progressive Node.js framework
-- **Prisma ORM** - Database access and management
-- **PostgreSQL** - Relational database (Aiven Cloud)
+- NestJS - Progressive Node.js framework
+- Prisma ORM - Database access and management
+- PostgreSQL - Relational database (Render PostgreSQL)
+- EJS - Template engine
+
 ### Frontend (from previous semester)
-- **HTML5** - Semantic markup
-- **CSS3** - Custom styling
-- **JavaScript** - Client-side interactivity
+- HTML5 - Semantic markup
+- CSS3 - Custom styling with Flexbox and Grid
+- JavaScript - Client-side interactivity
+- Swiper.js - Banner slider
 
 ### DevOps
-- **Render** - Cloud hosting and deployment
-- **GitHub** - Version control and CI/CD
+- Render - Cloud hosting and deployment (Web Service + PostgreSQL)
+- GitHub - Version control and CI/CD
 
-## Lab 2: Domain Model & Database
+---
+
+## Database Schema (Lab 2)
 
 ### Database Setup
-- **Provider:** PostgreSQL on Aiven Cloud (Free Tier)
-- **ORM:** Prisma 5.22.0
-- **Connection:** External URL with SSL
+- Provider: PostgreSQL on Render (Free Tier)
+- ORM: Prisma 5.22.0
+- Connection: Internal URL with SSL
 
 ### Entities (5 domain models)
 
 | Entity | Description | Key Fields |
 |--------|-------------|------------|
-| **User** | System users | id, email, name, role |
-| **Tour** | Travel packages | id, name, code, price, duration |
-| **Feedback** | User reviews | id, comment, tourId, userId |
-| **Booking** | Tour reservations | id, userId, tourId, travelDate |
-| **Contact** | Customer inquiries | id, name, email, message |
+| User | System users | id, email, name, role |
+| Tour | Travel packages | id, name, image, description, code, price, duration |
+| Feedback | Customer reviews | id, name, email, comment, tourId, userId |
+| Booking | Tour reservations | id, userId, tourId, travelDate, passengers, status |
+| Contact | Customer inquiries | id, name, email, phone, message, subscribe |
 
 ### Relationships
-- `User (1) → Feedback (n)` : One user can have many feedbacks
-- `User (1) → Booking (n)` : One user can book many tours
-- `Tour (1) → Feedback (n)` : One tour can receive many feedbacks
-- `Tour (1) → Booking (n)` : One tour can be booked many times
+
+- User (1) -> Feedback (n) : One user can have many feedbacks
+- User (1) -> Booking (n) : One user can book many tours
+- Tour (1) -> Feedback (n) : One tour can receive many feedbacks
+- Tour (1) -> Booking (n) : One tour can be booked many times
 
 ### ER Diagram
+
 ![ER Diagram](./er-diagram.png)
 
-### Migration & Seeding
-# Apply database schema
+---
+
+## Migration and Seeding
+
+### Apply database schema
 npx prisma migrate dev --name init
 
-# Seed initial tour data
+### Seed initial tour data
 npx prisma db seed
 
+---
 
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+## Local Setup and Installation
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+### Prerequisites
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+- Node.js 22+
+- npm 10+
+- PostgreSQL (local or Render PostgreSQL)
 
-## Description
+### Steps
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+```
+# 1. Clone repository
+git clone https://github.com/nguyenduongitmo/Web_full_ITMO_course.git
+cd Web_full_ITMO_course
 
-## Project setup
+# 2. Install dependencies
+npm install
 
-```bash
-$ npm install
+# 3. Create .env file
+cp .env.example .env
+
+# 4. Configure database in .env
+DATABASE_URL="postgresql://username:password@host:port/database?sslmode=require"
+
+# 5. Run migrations
+npx prisma migrate dev --name init
+
+# 6. Seed database
+npx prisma db seed
+
+# 7. Start application (development)
+npm run start:dev
+
+# 8. Open browser
+http://localhost:3000
 ```
 
-## Compile and run the project
+## Compile and run
 
-```bash
-# development
-$ npm run start
+Development
+```
+npm run start
+```
 
-# watch mode
-$ npm run start:dev
+Watch mode
+```
+npm run start:dev
+```
 
-# production mode
-$ npm run start:prod
+Production mode
+```
+npm run start:prod
 ```
 
 ## Run tests
+Unit tests
+```
+npm run test
+```
 
-```bash
-# unit tests
-$ npm run test
+E2e tests
+``` 
+npm run test:e2e
+ ```
 
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+Test coverage
+``` 
+npm run test:cov
 ```
 
 ## Deployment
+The project is deployed on Render.
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+## Build Command
+```
+npm install && npx prisma generate && npm run build
+```
+## Start Command
+```
+npm run start:prod
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### Lab Progress
 
-## Resources
+|Lab	| Content	| Points	| Status
+|-------|-----------|-----------|-------|
+|Lab 1	|Deploy on Render and Templating|	10|	Completed
+|Lab 2	|Domain Model and Database	|12	|Completed
+|Lab 3	|CRUD + SSE	| 12|	Pending
+|Lab 4	|RESTful API + Swagger|	12|	Pending
+|Lab 5	|GraphQL	|12|	Pending
+|Lab 6	|BFF + Caching	|10|	Pending
+|Lab 7	|Authentication	|12|	Pending
+|TOTAL	||	80	
 
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
