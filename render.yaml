@@ -1,12 +1,19 @@
 services:
   - type: web
-    name: royal-travel
+    name: Web_full_ITMO_course
     runtime: node
     plan: free
-    buildCommand: npm install && npm run build
+    region: frankfurt
+    branch: main
+    buildCommand: npm install --include=dev && npm run build
     startCommand: npm run start:prod
     envVars:
-      - key: DATABASE_URL
-        sync: false
+      - key: NODE_ENV
+        value: production
       - key: PORT
         value: 10000
+      - key: NPM_CONFIG_PRODUCTION
+        value: false
+    healthCheckPath: /
+    autoDeploy: true
+    numInstances: 1
