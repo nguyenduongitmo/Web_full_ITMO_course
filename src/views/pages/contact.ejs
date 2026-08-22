@@ -53,8 +53,8 @@
                         </div>
                         
                         <div class="contact-image">
-                            <img src="/public/images/vanphong.jpg" alt="Văn phòng ROYAL TRAVEL tại Saint Petersburg">
-    
+                            <img src="/images/vanphong.jpg" alt="Văn phòng ROYAL TRAVEL tại Saint Petersburg">
+                            <p class="contact-image-caption">Văn phòng ROYAL TRAVEL tại Saint Petersburg</p>
                         </div>
                     </div>
                     
@@ -62,7 +62,7 @@
                         <h3>Gửi yêu cầu tư vấn</h3>
                         <form id="contact-form" class="contact-form">
                             <div class="form-group">
-                                <label>Họ tên *</label>
+                                <label>Họ và tên *</label>
                                 <input type="text" name="name" placeholder="Nhập họ tên của bạn" required>
                             </div>
                             <div class="form-group">
@@ -98,7 +98,7 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label>Tin nhắn *</label>
+                                <label>Tin nhắn</label>
                                 <textarea name="message" rows="5" placeholder="Mô tả chi tiết yêu cầu của bạn..." required></textarea>
                             </div>
                             <div class="form-group checkbox">
@@ -112,7 +112,12 @@
                     </div>
                 </div>
 
-                <!-- PHẦN FEEDBACK - VẪN Ở TRANG LIÊN HỆ -->
+                <div class="section-divider">
+                    <span class="divider-line"></span>
+                    <span class="divider-icon">✦</span>
+                    <span class="divider-line"></span>
+                </div>
+
                 <section class="section feedback-section">
                     <div class="section__header">
                         <h2 class="section__title">Đánh giá từ khách hàng</h2>
@@ -120,12 +125,23 @@
                     </div>
                     
                     <div class="feedback-grid">
+                        <div class="feedback-list-wrapper">
+                            <h3>Đánh giá gần đây</h3>
+                            <div class="feedback-list-container">
+                                <ul id="feedback-list" class="feedback-list">
+                                    <li class="empty-state">
+                                        <p>Chưa có đánh giá nào. Hãy là người đầu tiên!</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        
                         <div class="feedback-form-wrapper">
                             <h3>Gửi đánh giá của bạn</h3>
                             <form id="feedback-form" class="feedback-form">
                                 <div class="form-group">
-                                    <label>Họ tên *</label>
-                                    <input type="text" name="name" placeholder="Nhập họ tên của bạn" required>
+                                    <label>Họ và tên *</label>
+                                    <input type="text" name="name" placeholder="Nhập họ và tên của bạn" required>
                                 </div>
                                 <div class="form-group">
                                     <label>Email *</label>
@@ -147,20 +163,11 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label>Ý kiến đánh giá *</label>
-                                    <textarea name="comment" rows="4" placeholder="Chia sẻ trải nghiệm của bạn..." required></textarea>
+                                    <label>Ý kiến đánh giá</label>
+                                    <textarea name="comment" rows="4" placeholder="Chia sẻ trải nghiệm của bạn..."></textarea>
                                 </div>
                                 <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
                             </form>
-                        </div>
-                        
-                        <div class="feedback-list-wrapper">
-                            <h3>Đánh giá gần đây</h3>
-                            <ul id="feedback-list" class="feedback-list">
-                                <li class="empty-state">
-                                    <p>Chưa có đánh giá nào. Hãy là người đầu tiên!</p>
-                                </li>
-                            </ul>
                         </div>
                     </div>
                 </section>
@@ -170,7 +177,7 @@
                         <div class="feedback__item-header">
                             <span class="feedback__name"></span>
                             <span class="feedback__email"></span>
-                            <span class="feedback__rating"></span>
+                            <span class="feedback__rating-display"></span>
                         </div>
                         <p class="feedback__comment"></p>
                         <div class="feedback__item-actions">
@@ -180,29 +187,34 @@
                     </li>
                 </template>
 
-                <!-- Đánh giá mẫu từ API -->
-<section class="section api-feedback-section">
-    <h2 class="section__title">Đánh giá mẫu</h2>
-    <div id="api-preloader" class="preloader" style="display: none;">
-        <div class="spinner"></div>
-        <p>Đang tải đánh giá...</p>
-    </div>
-    <div id="api-error" class="error-message" style="display: none;"></div>
-    <div id="api-feedback-list" class="feedback-list"></div>
-    <!-- Nút có margin-top để tạo khoảng cách -->
-    <button id="reload-api-btn" class="btn btn-primary" style="margin-top: 24px; display: block; margin-left: auto; margin-right: auto;">
-        Tải thêm đánh giá
-    </button>
-</section>
+                <section class="section api-feedback-section">
+                    <div class="section__header">
+                        <h2 class="section__title">Đánh giá mẫu</h2>
+                        <p class="section__subtitle">Tham khảo đánh giá từ các khách hàng khác</p>
+                    </div>
+                    
+                    <div id="api-preloader" class="preloader" style="display: none;">
+                        <div class="spinner"></div>
+                        <p>Đang tải đánh giá...</p>
+                    </div>
+                    
+                    <div id="api-error" class="error-message" style="display: none;"></div>
+                    
+                    <div id="api-feedback-list" class="feedback-list"></div>
+                    
+                    <div style="text-align: center; margin-top: 24px;">
+                        <button id="reload-api-btn" class="btn btn-primary">Tải thêm đánh giá</button>
+                    </div>
+                </section>
 
-<template id="api-feedback-template">
-    <div class="feedback__item api-item">
-        <p><strong class="api-name"></strong> (<span class="api-email"></span>)</p>
-        <p class="api-body"></p>
-        <p class="api-rating" style="color: #f59e0b; font-size: 16px; letter-spacing: 2px;"></p>
-        <small class="api-post-id">Mã bài viết: <span></span></small>
-    </div>
-</template>
+                <template id="api-feedback-template">
+                    <div class="feedback__item api-item">
+                        <p><strong class="api-name"></strong> (<span class="api-email"></span>)</p>
+                        <p class="api-body"></p>
+                        <small class="api-post-id">Mã bài viết: <span></span></small>
+                    </div>
+                </template>
+
             </div>
         </main>
         

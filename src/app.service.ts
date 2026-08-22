@@ -20,9 +20,8 @@ export class AppService {
       mission: 'Dùng trải nghiệm văn hóa đặc sắc để chuẩn bị hành trang cho thế hệ tương lai.',
       vision: 'Trở thành đơn vị hàng đầu trong lĩnh vực du ngoại cho thế hệ trẻ.',
       coreValues: [
-        '<strong>Cầu tiến không ngừng</strong>',
-        '<em>Chất lượng quốc tế</em>',
-        '<del>Thiếu sáng tạo</del> <ins>Tận tâm sáng tạo</ins>'
+        'Cầu tiến không ngừng',
+        'Chất lượng quốc tế'
       ],
       notes: [
         '<ins>Tour có thể thay đổi lịch trình tùy vào điều kiện thời tiết.</ins>',
