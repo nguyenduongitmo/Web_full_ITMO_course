@@ -1,10 +1,9 @@
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient({
-  log: ['query', 'info', 'warn', 'error'], // log chi tiết
+  log: ['error'],
 });
 
-// hàm thử lại khi kết nối hỏng
 async function retryOperation(fn: () => Promise<any>, maxRetries = 3) {
   for (let i = 0; i < maxRetries; i++) {
     try {
@@ -12,25 +11,21 @@ async function retryOperation(fn: () => Promise<any>, maxRetries = 3) {
     } catch (error) {
       console.log(`Lần thử ${i + 1} thất bại, đang thử lại...`);
       if (i === maxRetries - 1) throw error;
-      await new Promise(resolve => setTimeout(resolve, 2000 * (i + 1))); // Chờ 2-6s
+      await new Promise(resolve => setTimeout(resolve, 3000 * (i + 1)));
     }
   }
 }
 
 async function main() {
-  // Dữ liệu tour mẫu từ ứng dụng của mình
-
-  // b1: kết nối DB
   try {
     await prisma.$connect();
     console.log('Kết nối database thành công!');
   } catch (error) {
-    console.error('Không thể kết nối database:')
+    console.error('Không thể kết nối database:', error);
     process.exit(1);
   }
 
-
-  const tours = [
+  const allTours = [
     {
       name: 'Tour khám phá Saint Petersburg',
       image: 'SaintPetersburg_0.jpg',
@@ -85,35 +80,92 @@ async function main() {
       duration: '5 ngày 4 đêm',
       isFeatured: false,
     },
+    {
+      name: 'Tour khám phá Kaliningrad',
+      image: 'Kaliningrad_0.jpg',
+      description: 'Khám phá thành phố Kaliningrad với kiến trúc Phổ cổ và bờ biển Baltic tuyệt đẹp.',
+      code: '#ROYAL-07-VN-RU',
+      price: 480,
+      duration: '4 ngày 3 đêm',
+      isFeatured: false,
+    },
+    {
+      name: 'Tour khám phá Nizhny Novgorod',
+      image: 'NizhnyNovgorod_0.jpg',
+      description: 'Khám phá Nizhny Novgorod - thành phố cổ kính bên sông Volga với Điện Kremlin nguy nga.',
+      code: '#ROYAL-08-VN-RU',
+      price: 420,
+      duration: '4 ngày 3 đêm',
+      isFeatured: false,
+    },
+    {
+      name: 'Tour khám phá Vladimir',
+      image: 'Vladimir_0.jpg',
+      description: 'Khám phá Vladimir - thành phố cổ của nước Nga với kiến trúc vàng và di sản UNESCO.',
+      code: '#ROYAL-09-VN-RU',
+      price: 380,
+      duration: '3 ngày 2 đêm',
+      isFeatured: false,
+    },
   ];
 
-  console.log('Starting seed data...');
+  console.log('Bắt đầu seed dữ liệu...');
 
-
-  // b2: seed với retry cho mỗi tour
-   for (let i = 0; i < tours.length; i++) {
-    const tour = tours[i];
+  let success = false;
+  for (let attempt = 0; attempt < 3 && !success; attempt++) {
     try {
-      await retryOperation(async () => {
-        const result = await prisma.tour.upsert({
-          where: { code: tour.code },
-          update: {},
-          create: tour,
-        });
-        console.log(`${i + 1}/${tours.length} Created: ${result.name}`);
-      });
+      console.log(`Lần thử ${attempt + 1}/3...`);
+      
+      await prisma.$transaction(
+        allTours.map(tour =>
+          prisma.tour.upsert({
+            where: { code: tour.code },
+            update: tour,
+            create: tour,
+          })
+        )
+      );
+      
+      success = true;
+      console.log(`Đã seed ${allTours.length} tours thành công!`);
+      
     } catch (error) {
-      console.error(`Lỗi khi seed tour ${tour.code}:`);
-     // vẫn tiếp tục với tour khác
+      console.log(`Lần thử ${attempt + 1} thất bại.`);
+      if (attempt < 2) {
+        console.log('Đợi 5 giây rồi thử lại...');
+        await new Promise(resolve => setTimeout(resolve, 5000));
+      }
     }
   }
 
-  console.log('Seed data completed!');
+  if (!success) {
+    console.log('Transaction thất bại, thử seed từng tour...');
+    
+    for (let i = 0; i < allTours.length; i++) {
+      const tour = allTours[i];
+      try {
+        await retryOperation(async () => {
+          const result = await prisma.tour.upsert({
+            where: { code: tour.code },
+            update: tour,
+            create: tour,
+          });
+          console.log(`${i + 1}/${allTours.length} ${result.name}`);
+        });
+      } catch (error) {
+        console.error(`Lỗi seed tour ${tour.code}.`);
+      }
+    }
+  }
+
+  const totalTours = await prisma.tour.count();
+  console.log(`Tổng số tour: ${totalTours}`);
+  console.log('Seed hoàn tất!');
 }
 
 main()
   .catch((e) => {
-    console.error('Error occurred while seeding data:', e);
+    console.error('Lỗi seed:', e);
     process.exit(1);
   })
   .finally(async () => {

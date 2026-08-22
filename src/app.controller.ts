@@ -14,7 +14,7 @@ export class AppController {
       ...data,
       currentPath: '/',
       showBanner: true,
-      searchQuery: '', // ← THÊM DÒNG NÀY
+      searchQuery: '', 
     };
   }
 
@@ -27,7 +27,7 @@ export class AppController {
       ...data,
       currentPath: '/tours',
       showBanner: false,
-      searchQuery: '', // ← THÊM DÒNG NÀY
+      searchQuery: '', 
     };
   }
 
@@ -40,7 +40,7 @@ export class AppController {
       ...data,
       currentPath: '/contact',
       showBanner: false,
-      searchQuery: '', // ← THÊM DÒNG NÀY
+      searchQuery: '', 
       extraScripts: `
         <script src="/js/feedback.js" defer></script>
         <script src="/js/api-feedback.js" defer></script>
