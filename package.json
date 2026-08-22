@@ -14,12 +14,12 @@
     "npm": ">=10.0.0"
   },
   "scripts": {
-    "prebuild": "prisma generate",
-    "build": "nest build",
+    "prebuild": "npx prisma generate",
+    "build": "npx nest build",
     "start": "node dist/src/main",
-    "start:dev": "nest start --watch",
+    "start:dev": "npx nest start --watch",
     "start:prod": "node dist/src/main",
-    "postinstall": "prisma generate"
+    "postinstall": "npx prisma generate"
   },
   "dependencies": {
     "@nestjs/cli": "^11.0.0",
@@ -76,6 +76,6 @@
     "testEnvironment": "node"
   },
   "prisma": {
-    "seed": "ts-node prisma/seed.ts"
+    "seed": "node prisma/seed.js"
   }
 }

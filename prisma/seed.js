@@ -1,20 +1,6 @@
-import { PrismaClient } from '@prisma/client';
+const { PrismaClient } = require('@prisma/client');
 
-const prisma = new PrismaClient({
-  log: ['error'],
-});
-
-async function retryOperation(fn: () => Promise<any>, maxRetries = 3) {
-  for (let i = 0; i < maxRetries; i++) {
-    try {
-      return await fn();
-    } catch (error) {
-      console.log(`Lần thử ${i + 1} thất bại, đang thử lại...`);
-      if (i === maxRetries - 1) throw error;
-      await new Promise(resolve => setTimeout(resolve, 3000 * (i + 1)));
-    }
-  }
-}
+const prisma = new PrismaClient();
 
 async function main() {
   try {
@@ -111,50 +97,17 @@ async function main() {
 
   console.log('Bắt đầu seed dữ liệu...');
 
-  let success = false;
-  for (let attempt = 0; attempt < 3 && !success; attempt++) {
+  for (let i = 0; i < allTours.length; i++) {
+    const tour = allTours[i];
     try {
-      console.log(`Lần thử ${attempt + 1}/3...`);
-      
-      await prisma.$transaction(
-        allTours.map(tour =>
-          prisma.tour.upsert({
-            where: { code: tour.code },
-            update: tour,
-            create: tour,
-          })
-        )
-      );
-      
-      success = true;
-      console.log(`Đã seed ${allTours.length} tours thành công!`);
-      
+      const result = await prisma.tour.upsert({
+        where: { code: tour.code },
+        update: tour,
+        create: tour,
+      });
+      console.log(`${i + 1}/${allTours.length} ${result.name}`);
     } catch (error) {
-      console.log(`Lần thử ${attempt + 1} thất bại.`);
-      if (attempt < 2) {
-        console.log('Đợi 5 giây rồi thử lại...');
-        await new Promise(resolve => setTimeout(resolve, 5000));
-      }
-    }
-  }
-
-  if (!success) {
-    console.log('Transaction thất bại, thử seed từng tour...');
-    
-    for (let i = 0; i < allTours.length; i++) {
-      const tour = allTours[i];
-      try {
-        await retryOperation(async () => {
-          const result = await prisma.tour.upsert({
-            where: { code: tour.code },
-            update: tour,
-            create: tour,
-          });
-          console.log(`${i + 1}/${allTours.length} ${result.name}`);
-        });
-      } catch (error) {
-        console.error(`Lỗi seed tour ${tour.code}.`);
-      }
+      console.error(`Lỗi seed tour ${tour.code}:`, error.message);
     }
   }
 
