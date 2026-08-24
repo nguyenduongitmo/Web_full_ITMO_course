@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { UpdateBookingDto } from './dto/update-booking.dto';
@@ -8,61 +8,52 @@ export class BookingsService {
   constructor(private prisma: PrismaService) {}
 
   async generateBookingCode(): Promise<string> {
-  const count = await this.prisma.booking.count();
-  const date = new Date();
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  const sequence = String(count + 1).padStart(4, '0');
-  return `BK-${year}${month}${day}-${sequence}`;
-}
-
-  async create(createBookingDto: CreateBookingDto) {
-    // Kiểm tra tour tồn tại
-  const tour = await this.prisma.tour.findUnique({
-    where: { id: createBookingDto.tourId },
-  });
-  if (!tour) {
-    throw new Error('Tour không tồn tại!');
+    const count = await this.prisma.booking.count();
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const sequence = String(count + 1).padStart(4, '0');
+    return `BK-${year}${month}${day}-${sequence}`;
   }
 
-  // Kiểm tra user tồn tại (nếu có userId)
-  if (createBookingDto.userId) {
+  async create(createBookingDto: CreateBookingDto) {
+    const tour = await this.prisma.tour.findUnique({
+      where: { id: createBookingDto.tourId },
+    });
+    if (!tour) {
+      throw new NotFoundException('Tour không tồn tại!');
+    }
+
     const user = await this.prisma.user.findUnique({
       where: { id: createBookingDto.userId },
     });
     if (!user) {
-      throw new Error('Người dùng không tồn tại!');
+      throw new NotFoundException('Người dùng không tồn tại!');
     }
+
+    const bookingCode = await this.generateBookingCode();
+
+    const data = {
+      bookingCode,
+      userId: createBookingDto.userId,
+      tourId: createBookingDto.tourId,
+      fullName: createBookingDto.fullName,
+      email: createBookingDto.email,
+      phone: createBookingDto.phone || '',
+      travelDate: new Date(createBookingDto.travelDate),
+      passengers: createBookingDto.passengers || 1,
+      status: createBookingDto.status || 'PENDING',
+    };
+    return await this.prisma.booking.create({ data });
   }
-
-  // Tạo mã booking tự động
-  const bookingCode = await this.generateBookingCode();
-
-  const data = {
-    bookingCode: bookingCode,
-    userId: createBookingDto.userId,
-    tourId: createBookingDto.tourId,
-    fullName: createBookingDto.fullName,
-    email: createBookingDto.email,
-    phone: createBookingDto.phone || '',
-    travelDate: new Date(createBookingDto.travelDate),
-    passengers: createBookingDto.passengers || 1,
-    status: createBookingDto.status || 'PENDING',
-  };
-  return await this.prisma.booking.create({ data });
-}
 
   async findAll() {
     return await this.prisma.booking.findMany({
       orderBy: { createdAt: 'desc' },
       include: {
-        user: {
-          select: { id: true, name: true, email: true },
-        },
-        tour: {
-          select: { id: true, name: true, code: true, price: true },
-        },
+        user: { select: { id: true, name: true, email: true } },
+        tour: { select: { id: true, name: true, code: true, price: true } },
       },
     });
   }
@@ -71,14 +62,13 @@ export class BookingsService {
     const booking = await this.prisma.booking.findUnique({
       where: { id },
       include: {
-        user: {
-          select: { id: true, name: true, email: true },
-        },
-        tour: {
-          select: { id: true, name: true, code: true, price: true, image: true },
-        },
+        user: { select: { id: true, name: true, email: true } },
+        tour: { select: { id: true, name: true, code: true, price: true, image: true } },
       },
     });
+    if (!booking) {
+      throw new NotFoundException('Không tìm thấy booking!');
+    }
     return booking;
   }
 
@@ -86,9 +76,7 @@ export class BookingsService {
     return await this.prisma.booking.findMany({
       where: { userId },
       orderBy: { createdAt: 'desc' },
-      include: {
-        tour: true,
-      },
+      include: { tour: true },
     });
   }
 
@@ -100,7 +88,15 @@ export class BookingsService {
     if (updateBookingDto.travelDate) data.travelDate = new Date(updateBookingDto.travelDate);
     if (updateBookingDto.passengers) data.passengers = updateBookingDto.passengers;
     if (updateBookingDto.status) data.status = updateBookingDto.status;
-    if (updateBookingDto.tourId) data.tourId = updateBookingDto.tourId;
+    if (updateBookingDto.tourId) {
+      const tour = await this.prisma.tour.findUnique({
+        where: { id: updateBookingDto.tourId },
+      });
+      if (!tour) {
+        throw new NotFoundException('Tour mới không tồn tại!');
+      }
+      data.tourId = updateBookingDto.tourId;
+    }
 
     return await this.prisma.booking.update({
       where: { id },
@@ -108,13 +104,19 @@ export class BookingsService {
     });
   }
 
-
-async remove(id: string) {
+  async remove(id: string) {
+    const booking = await this.prisma.booking.findUnique({
+      where: { id },
+    });
+    if (!booking) {
+      throw new NotFoundException('Không tìm thấy booking!');
+    }
     return await this.prisma.booking.delete({
       where: { id },
     });
   }
-async updateStatus(id: string, status: string) {
+
+  async updateStatus(id: string, status: string) {
     const validStatuses = ['PENDING', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED'];
     if (!validStatuses.includes(status)) {
       throw new Error(`Trạng thái không hợp lệ! Chấp nhận: ${validStatuses.join(', ')}`);
