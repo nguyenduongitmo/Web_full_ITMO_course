@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-wrapper">
+        <%- include('../partials/header', { isLoggedIn, username, currentPath }) %>
+        
+        <main class="main">
+            <div class="container">
+                <% if (!tour) { %>
+    <section class="section">
+        <div class="section__header">
+            <h1 class="section__title">Không tìm thấy tour</h1>
+            <p>Tour bạn tìm kiếm không tồn tại.</p>
+            <a href="/tours" class="btn btn-primary">Quay lại danh sách</a>
+        </div>
+    </section>
+<% } else { %>
+                <section class="section tour-detail">
+                    <div class="section__header">
+                        <h1 class="section__title"><%= tour.name %></h1>
+                        <a href="/tours" class="btn btn-outline">← Quay lại danh sách</a>
+                    </div>
+                    
+                    <div class="tour-detail__grid">
+                        <div class="tour-detail__image">
+                            <img src="/images/<%= tour.image %>" alt="<%= tour.name %>">
+                        </div>
+                        <div class="tour-detail__info">
+                            <p><strong>Mã tour:</strong> <%= tour.code %></p>
+                            <p><strong>Giá:</strong> $<%= tour.price %> / người</p>
+                            <p><strong>Thời gian:</strong> <%= tour.duration %></p>
+                            <p><strong>Nổi bật:</strong> <%= tour.isFeatured ? '⭐ Có' : 'Không' %></p>
+                            <p><strong>Mô tả:</strong></p>
+                            <p><%= tour.description %></p>
+                            
+                            <!-- KHÔNG PHÂN QUYỀN - Tạm thời ai cũng thấy được -->
+                            <div class="tour-detail__actions">
+                                <a href="/tours/<%= tour.id %>/edit" class="btn btn-edit">Sửa tour</a>
+                                <form action="/tours/<%= tour.id %>" method="POST" style="display:inline;">
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <button type="submit" class="btn btn-delete" onclick="return confirm('Bạn có chắc muốn xóa tour này?')">Xóa tour</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            <% } %>
+            </div>
+        </main>
+        
+        <%- include('../partials/footer') %>
+    </div>
+
+    <script src="/js/script.js" defer></script>
+</body>
+</html>

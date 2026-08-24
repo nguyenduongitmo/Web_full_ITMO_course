@@ -23,6 +23,9 @@
                             <%= tours.length %> tour đang chờ bạn khám phá
                             <% if (searchQuery) { %> - Kết quả tìm kiếm: "<%= searchQuery %>"<% } %>
                         </p>
+                        <div class="header-actions">
+                            <a href="/tours/create" class="btn btn-primary">+ Thêm tour mới</a>
+                        </div>
                     </div>
                 </section>
 
@@ -51,8 +54,16 @@
                                     <div class="tour__code">
                                         Mã tour: <%= tour.code %>
                                     </div>
-                                    <!-- ĐỔI THÀNH Xem chi tiết -->
-                                    <a href="/tours/<%= tour.id %>" class="btn btn-book">Xem chi tiết</a>
+                            
+                                        <!-- Các nút action - tạm thời ai cũng thấy -->
+                                    <div class="tour-actions">
+                                        <a href="/tours/<%= tour.id %>" class="btn btn-view">Xem chi tiết</a>
+                                        <a href="/tours/<%= tour.id %>/edit" class="btn btn-edit">Sửa</a>
+                                        <form action="/tours/<%= tour.id %>" method="POST" style="margin:0;">
+                                            <input type="hidden" name="_method" value="DELETE">
+                                            <button type="submit" class="btn btn-delete" onclick="return confirm('Bạn có chắc muốn xóa tour này?')">Xóa</button>
+                                        </form>
+                                    </div>
                                 </div>
                             </article>
                         <% }); %>

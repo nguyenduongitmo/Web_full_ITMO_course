@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROYAL TRAVEL - Tạo tour mới</title>
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-wrapper">
+        <%- include('../partials/header', { isLoggedIn, username, currentPath }) %>
+        
+        <main class="main">
+            <div class="container">
+                <section class="section tour-form">
+                    <div class="section__header">
+                        <h1 class="section__title">Tạo tour mới</h1>
+                        <a href="/tours" class="btn btn-outline">← Quay lại danh sách</a>
+                    </div>
+                    
+                    <form action="/tours" method="POST" style="max-width: 600px; margin: 0 auto;">
+                        <div class="form-group">
+                            <label>Tên tour *</label>
+                            <input type="text" name="name" required placeholder="Ví dụ: Tour khám phá Moscow">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Hình ảnh</label>
+                            <input type="text" name="image" placeholder="tenhinh.jpg">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Mô tả *</label>
+                            <textarea name="description" rows="5" required placeholder="Mô tả chi tiết về tour..."></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Mã tour</label>
+                            <input type="text" name="code" placeholder="Nhập mã tour hoặc để trống để tự động tạo mã">
+                            <small style="color: #64748b; display: block; margin-top: 4px;">
+                                Nếu để trống, hệ thống sẽ tự động tạo mã theo định dạng #ROYAL-XX-VN-RU
+                            </small>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <div class="form-group">
+                                <label>Giá (USD)</label>
+                                <input type="number" name="price" step="0.01" placeholder="500">
+                            </div>
+                            <div class="form-group">
+                                <label>Thời gian</label>
+                                <input type="text" name="duration" placeholder="5 ngày 4 đêm">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" name="isFeatured" value="true">
+                                Tour nổi bật
+                            </label>
+                        </div>
+                        
+                        <div class="tour-form-actions">
+                            <button type="submit" class="btn btn-primary">Tạo tour</button>
+                            <a href="/tours" class="btn btn-cancel">Hủy</a>
+                        </div>
+                    </form>
+                </section>
+            </div>
+        </main>
+        
+        <%- include('../partials/footer') %>
+    </div>
+
+    <script src="/js/script.js" defer></script>
+</body>
+</html>
