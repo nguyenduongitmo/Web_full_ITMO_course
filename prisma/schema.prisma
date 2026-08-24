@@ -52,6 +52,7 @@ model Feedback {
 // 4. Booking (đặt tour - cho lab 3,4)
 model Booking {
   id          String   @id @default(cuid())
+  bookingCode String   @unique  // thêm mã booking
   userId      String
   user        User     @relation(fields: [userId], references: [id])
   tourId      String
