@@ -95,7 +95,7 @@ async function main() {
     },
   ];
 
-  console.log('Bắt đầu seed dữ liệu...');
+  console.log('Bắt đầu seed dữ liệu tour...');
 
   for (let i = 0; i < allTours.length; i++) {
     const tour = allTours[i];
@@ -111,9 +111,162 @@ async function main() {
     }
   }
 
+  console.log('\nBắt đầu seed users...');
+  
+  const admin = await prisma.user.upsert({
+    where: { email: 'admin@royaltravel.com' },
+    update: {},
+    create: {
+      email: 'admin@royaltravel.com',
+      name: 'Administrator',
+      password: 'admin123',
+      role: 'ADMIN',
+    },
+  });
+  console.log('Admin user được tạo: admin@royaltravel.com');
+
+  const user1 = await prisma.user.upsert({
+    where: { email: 'user@example.com' },
+    update: {},
+    create: {
+      email: 'user@example.com',
+      name: 'Nguyen Van A',
+      password: 'user123',
+      role: 'USER',
+    },
+  });
+  console.log('User được tạo: user@example.com');
+
+  // Lấy danh sách user và tour để tạo booking, feedback
+  const users = await prisma.user.findMany();
+  const tours = await prisma.tour.findMany();
+
+  //  BOOKINGS 
+  if (tours.length >= 3 && users.length >= 1) {
+    console.log('\, Bắt đầu seed bookings...');
+    
+    const bookingsData = [
+      {
+        userId: users[0].id,
+        tourId: tours[0].id,
+        fullName: 'Tran Van B',
+        email: 'tranb@example.com',
+        phone: '0912345678',
+        travelDate: new Date('2025-01-15'),
+        passengers: 2,
+        status: 'CONFIRMED',
+      },
+      {
+        userId: users[0].id,
+        tourId: tours[1].id,
+        fullName: 'Le Thi C',
+        email: 'lethic@example.com',
+        phone: '0987654321',
+        travelDate: new Date('2025-02-20'),
+        passengers: 3,
+        status: 'PENDING',
+      },
+      {
+        userId: users[users.length - 1]?.id || users[0].id,
+        tourId: tours[2].id,
+        fullName: 'Pham Van D',
+        email: 'phamvd@example.com',
+        phone: '0977123456',
+        travelDate: new Date('2025-03-10'),
+        passengers: 1,
+        status: 'DELIVERED',
+      },
+    ];
+
+    for (const booking of bookingsData) {
+      try {
+        await prisma.booking.create({ data: booking });
+        console.log(`Booking created: ${booking.fullName} - ${booking.travelDate}`);
+      } catch (error) {
+        console.error('Lỗi seed booking:', error.message);
+      }
+    }
+  }
+
+//  FEEDBACKS 
+  if (tours.length >= 3) {
+    console.log('\nBắt đầu seed feedbacks...');
+    
+    const feedbacksData = [
+      {
+        name: 'Nguyen Van E',
+        email: 'nguyene@example.com',
+        comment: 'Tour rat tuyet voi! Huong dan vien nhiet tinh.',
+        tourId: tours[0]?.id || null,
+        userId: users[0]?.id || null,
+      },
+      {
+        name: 'Tran Thi F',
+        email: 'tranf@example.com',
+        comment: 'Khach san sach se, do an ngon. Se quay lai!',
+        tourId: tours[1]?.id || null,
+        userId: users[users.length - 1]?.id || null,
+      },
+      {
+        name: 'Le Van G',
+        email: 'levang@example.com',
+        comment: 'Gia ca hop ly, dich vu chuyen nghiep.',
+        tourId: tours[2]?.id || null,
+        userId: null,
+      },
+    ];
+
+    for (const feedback of feedbacksData) {
+      try {
+        await prisma.feedback.create({ data: feedback });
+        console.log(`Feedback created: ${feedback.name}`);
+      } catch (error) {
+        console.error('Lỗi seed feedback:', error.message);
+      }
+    }
+  }
+
+  //  CONTACTS 
+  console.log('\nBắt đầu seed contacts...');
+  
+  const contactsData = [
+    {
+      name: 'Nguyen Thi H',
+      email: 'nguyenthih@example.com',
+      phone: '0933123456',
+      message: 'Toi muon tim hieu ve tour Moscow 5 ngay 4 dem.',
+      subscribe: true,
+    },
+    {
+      name: 'Tran Van I',
+      email: 'tranvi@example.com',
+      phone: '0944567890',
+      message: 'Cho toi xin thong tin tour Sochi nhe.',
+      subscribe: false,
+    },
+  ];
+
+  for (const contact of contactsData) {
+    try {
+      await prisma.contact.create({ data: contact });
+      console.log(`Contact created: ${contact.name}`);
+    } catch (error) {
+      console.error('Lỗi seed contact:', error.message);
+    }
+  }
+
+  console.log('\n TỔNG KẾT SEED ');
+  const totalUsers = await prisma.user.count();
   const totalTours = await prisma.tour.count();
-  console.log(`Tổng số tour: ${totalTours}`);
-  console.log('Seed hoàn tất!');
+  const totalBookings = await prisma.booking.count();
+  const totalFeedbacks = await prisma.feedback.count();
+  const totalContacts = await prisma.contact.count();
+
+  console.log(`Users: ${totalUsers}`);
+  console.log(`Tours: ${totalTours}`);
+  console.log(`Bookings: ${totalBookings}`);
+  console.log(`Feedbacks: ${totalFeedbacks}`);
+  console.log(`Contacts: ${totalContacts}`);
 }
 
 main()
