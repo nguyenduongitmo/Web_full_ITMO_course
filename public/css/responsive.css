@@ -341,6 +341,23 @@
     .tours-header .section__subtitle {
         margin-bottom: 20px;
     }
+    
+     .tour-detail__grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .tour-actions {
+        flex-direction: column;
+    }
+    
+    .tour-actions .btn {
+        width: 100%;
+        flex: unset;
+    }
+    
+    .tour-form-actions {
+        flex-direction: column;
+    }
 }
 
 @media (max-width: 480px) {
