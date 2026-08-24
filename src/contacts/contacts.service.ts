@@ -1,26 +1,64 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
 import { CreateContactDto } from './dto/create-contact.dto';
 import { UpdateContactDto } from './dto/update-contact.dto';
 
 @Injectable()
 export class ContactsService {
-  create(createContactDto: CreateContactDto) {
-    return 'This action adds a new contact';
+  constructor(private prisma: PrismaService) {}
+
+  async create(createContactDto: CreateContactDto) {
+    const data = {
+      name: createContactDto.name,
+      email: createContactDto.email,
+      phone: createContactDto.phone || '',
+      destination: createContactDto.destination || '',
+      budget: createContactDto.budget || '',
+      message: createContactDto.message,
+      subscribe: createContactDto.subscribe || false,
+    };
+    return await this.prisma.contact.create({ data });
   }
 
-  findAll() {
-    return `This action returns all contacts`;
+async findAll() {
+    return await this.prisma.contact.findMany({
+      orderBy: { createdAt: 'desc' },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} contact`;
+  async findOne(id: string) {
+    const contact = await this.prisma.contact.findUnique({
+      where: { id },
+    });
+    if (!contact) {
+      throw new NotFoundException('Không tìm thấy liên hệ!');
+    }
+    return contact;
   }
 
-  update(id: number, updateContactDto: UpdateContactDto) {
-    return `This action updates a #${id} contact`;
-  }
+async update(id: string, updateContactDto: UpdateContactDto) {
+    const data: any = {};
+    if (updateContactDto.name) data.name = updateContactDto.name;
+    if (updateContactDto.email) data.email = updateContactDto.email;
+    if (updateContactDto.phone) data.phone = updateContactDto.phone;
+    if (updateContactDto.message) data.message = updateContactDto.message;
+    if (updateContactDto.subscribe !== undefined) data.subscribe = updateContactDto.subscribe;
 
-  remove(id: number) {
-    return `This action removes a #${id} contact`;
+    return await this.prisma.contact.update({
+      where: { id },
+      data,
+    });
+  }
+    
+  async remove(id: string) {
+    const contact = await this.prisma.contact.findUnique({
+      where: { id },
+    });
+    if (!contact) {
+      throw new NotFoundException('Không tìm thấy liên hệ!');
+    }
+    return await this.prisma.contact.delete({
+      where: { id },
+    });
   }
 }

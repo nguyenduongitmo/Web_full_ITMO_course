@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-wrapper">
+        <%- include('../partials/header', { isLoggedIn, username, currentPath }) %>
+        
+        <main class="main">
+            <div class="container">
+                <section class="section admin-section">
+                    <div class="section__header">
+                        <h1 class="section__title">Quản lý đặt tour</h1>
+                        <p class="section__subtitle">Danh sách các đơn đặt tour</p>
+                        <p style="margin-top: 8px; color: var(--gray-500); font-size: 14px;">
+                            Tổng số: <strong><%= bookings.length %></strong> đơn đặt tour
+                        </p>
+                    </div>
+                
+
+                <% if (bookings.length > 0) { %>
+                    <div class="table-responsive">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Mã đặt</th>
+                                    <th>Khách hàng</th>
+                                    <th>Tour</th>
+                                    <th>Ngày đi</th>
+                                    <th>Số khách</th>
+                                    <th>Trạng thái</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% bookings.forEach(function(booking, index) { %>
+                                    <tr>
+                                        <td><%= index + 1 %></td>
+                                        <td><%= booking.bookingCode || 'N/A' %></td>
+                                        <td>
+                                            <strong><%= booking.fullName %></strong>
+                                            <br><small style="color: var(--gray-500);"><%= booking.email %></small>
+                                        </td>
+                                        <td><%= booking.tour?.name || 'Đã xóa' %></td>
+                                        <td><%= new Date(booking.travelDate).toLocaleDateString('vi-VN') %></td>
+                                        <td><%= booking.passengers %></td>
+                                        <td>
+                                            <span class="status-badge status-<%= booking.status.toLowerCase() %>">
+                                                <%= booking.status %>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a href="/admin/bookings/<%= booking.id %>" class="btn btn-view">Xem</a>
+                                        </td>
+                                    </tr>
+                                <% }); %>
+                            </tbody>
+                        </table>
+                    </div>
+                <% } else { %>
+                    <div class="empty-state">
+                        <p>Chưa có đơn đặt tour nào</p>
+                    </div>
+                <% } %>
+            </div>
+        </section>
+        </main>
+        
+        <%- include('../partials/footer') %>
+    </div>
+
+    <script src="/js/script.js" defer></script>
+</body>
+</html>

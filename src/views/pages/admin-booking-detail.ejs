@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-wrapper">
+        <%- include('../partials/header', { isLoggedIn, username, currentPath }) %>
+        
+        <main class="main">
+            <div class="container">
+                <section class="section">
+                    <div class="section__header">
+                        <h1 class="section__title">Chi tiết đặt tour</h1>
+                        <a href="/admin/bookings" class="btn btn-outline">← Quay lại danh sách</a>
+                    </div>
+                    
+                    <div class="tour-detail__grid">
+                        <div class="tour-detail__info">
+                            <h3>Thông tin khách hàng</h3>
+                            <p><strong>Mã đặt tour:</strong> <%= booking.bookingCode || 'N/A' %></p>
+                            <p><strong>Họ tên:</strong> <%= booking.fullName %></p>
+                            <p><strong>Email:</strong> <%= booking.email %></p>
+                            <p><strong>Điện thoại:</strong> <%= booking.phone || 'Chưa cập nhật' %></p>
+                        </div>
+                        <div class="tour-detail__info">
+                            <h3>Thông tin tour</h3>
+                            <p><strong>Tour:</strong> <%= booking.tour?.name || 'Đã xóa' %></p>
+                            <p><strong>Mã tour:</strong> <%= booking.tour?.code || 'N/A' %></p>
+                            <p><strong>Ngày đi:</strong> <%= new Date(booking.travelDate).toLocaleDateString('vi-VN') %></p>
+                            <p><strong>Số khách:</strong> <%= booking.passengers %></p>
+                            <p><strong>Trạng thái:</strong> 
+                                <span class="status-badge status-<%= booking.status.toLowerCase() %>">
+                                    <%= booking.status %>
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="tour-detail__actions">
+                        <a href="/admin/bookings/<%= booking.id %>/edit" class="btn btn-edit">Sửa</a>
+                        <form action="/admin/bookings/<%= booking.id %>" method="POST" style="display:inline;">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button type="submit" class="btn btn-delete" onclick="return confirm('Xóa đơn đặt tour này?')">Xóa</button>
+                        </form>
+                    </div>
+                    <div class="booking-status-form">
+    <h3>Cập nhật trạng thái</h3>
+    <form action="/admin/bookings/<%= booking.id %>/status" method="POST">
+        <input type="hidden" name="_method" value="PATCH">
+        <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+            <select name="status" class="form-select" style="padding: 8px 16px; border-radius: 8px; border: 1px solid var(--gray-300);">
+                <option value="PENDING" <%= booking.status === 'PENDING' ? 'selected' : '' %>>Chờ xác nhận</option>
+                <option value="CONFIRMED" <%= booking.status === 'CONFIRMED' ? 'selected' : '' %>>Đã xác nhận</option>
+                <option value="PROCESSING" <%= booking.status === 'PROCESSING' ? 'selected' : '' %>>Đang xử lý</option>
+                <option value="SHIPPED" <%= booking.status === 'SHIPPED' ? 'selected' : '' %>>Đã gửi</option>
+                <option value="DELIVERED" <%= booking.status === 'DELIVERED' ? 'selected' : '' %>>Đã nhận</option>
+                <option value="CANCELLED" <%= booking.status === 'CANCELLED' ? 'selected' : '' %>>Đã hủy</option>
+            </select>
+            <button type="submit" class="btn btn-primary">Cập nhật</button>
+        </div>
+    </form>
+</div>
+                </section>
+            </div>
+        </main>
+        
+        <%- include('../partials/footer') %>
+    </div>
+
+    <script src="/js/script.js" defer></script>
+</body>
+</html>

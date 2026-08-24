@@ -1,26 +1,76 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
 import { CreateFeedbackDto } from './dto/create-feedback.dto';
 import { UpdateFeedbackDto } from './dto/update-feedback.dto';
 
 @Injectable()
 export class FeedbacksService {
-  create(createFeedbackDto: CreateFeedbackDto) {
-    return 'This action adds a new feedback';
+  constructor(private prisma: PrismaService) {}
+
+  async create(createFeedbackDto: CreateFeedbackDto) {
+    const data = {
+      name: createFeedbackDto.name,
+      email: createFeedbackDto.email,
+      comment: createFeedbackDto.comment,
+      tourId: createFeedbackDto.tourId || null,
+      userId: createFeedbackDto.userId || null,
+    };
+    return await this.prisma.feedback.create({ data });
   }
 
-  findAll() {
-    return `This action returns all feedbacks`;
+  async findAll() {
+    return await this.prisma.feedback.findMany({
+      orderBy: { createdAt: 'desc' },
+      include: {
+        tour: { select: { id: true, name: true } },
+        user: { select: { id: true, name: true, email: true } },
+      },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} feedback`;
+  async findOne(id: string) {
+    const feedback = await this.prisma.feedback.findUnique({
+      where: { id },
+      include: {
+        tour: { select: { id: true, name: true } },
+        user: { select: { id: true, name: true, email: true } },
+      },
+    });
+    if (!feedback) {
+      throw new NotFoundException('Không tìm thấy đánh giá!');
+    }
+    return feedback;
   }
 
-  update(id: number, updateFeedbackDto: UpdateFeedbackDto) {
-    return `This action updates a #${id} feedback`;
+  async findByTour(tourId: string) {
+    return await this.prisma.feedback.findMany({
+      where: { tourId },
+      orderBy: { createdAt: 'desc' },
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} feedback`;
+  async update(id: string, updateFeedbackDto: UpdateFeedbackDto) {
+    const data: any = {};
+    if (updateFeedbackDto.name) data.name = updateFeedbackDto.name;
+    if (updateFeedbackDto.email) data.email = updateFeedbackDto.email;
+    if (updateFeedbackDto.comment) data.comment = updateFeedbackDto.comment;
+    if (updateFeedbackDto.tourId) data.tourId = updateFeedbackDto.tourId;
+
+    return await this.prisma.feedback.update({
+      where: { id },
+      data,
+    });
+  }
+
+  async remove(id: string) {
+    const feedback = await this.prisma.feedback.findUnique({
+      where: { id },
+    });
+    if (!feedback) {
+      throw new NotFoundException('Không tìm thấy đánh giá!');
+    }
+    return await this.prisma.feedback.delete({
+      where: { id },
+    });
   }
 }

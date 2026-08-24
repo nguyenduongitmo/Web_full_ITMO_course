@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-wrapper">
+        <%- include('../partials/header', { isLoggedIn, username, currentPath }) %>
+        
+        <main class="main">
+            <div class="container">
+                <section class="section">
+                    <div class="section__header">
+                        <h1 class="section__title">Chi tiết đánh giá</h1>
+                        <a href="/admin/feedbacks" class="btn btn-outline">← Quay lại danh sách</a>
+                    </div>
+                    
+                    <div class="tour-detail__grid">
+                        <div class="tour-detail__info">
+                            <h3>Thông tin khách hàng</h3>
+                            <p><strong>Họ tên:</strong> <%= feedback.name %></p>
+                            <p><strong>Email:</strong> <%= feedback.email %></p>
+                            <p><strong>Tour:</strong> <%= feedback.tour?.name || 'Không có' %></p>
+                            <p><strong>Ngày gửi:</strong> <%= new Date(feedback.createdAt).toLocaleString('vi-VN') %></p>
+                        </div>
+                        <div class="tour-detail__info">
+                            <h3>Đánh giá</h3>
+                            <p style="font-size: 28px; color: #f59e0b; letter-spacing: 4px; margin-top: 8px;">
+                                <%= '★'.repeat(feedback.rating || 0) %><%= '☆'.repeat(5 - (feedback.rating || 0)) %>
+                            </p>
+                            <p style="background: var(--gray-100); padding: 16px; border-radius: 8px; margin-top: 12px;">
+                                <%= feedback.comment %>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="tour-detail__actions">
+                        <form action="/admin/feedbacks/<%= feedback.id %>" method="POST" style="display:inline;">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <button type="submit" class="btn btn-delete" onclick="return confirm('Xóa đánh giá này?')">Xóa</button>
+                        </form>
+                    </div>
+                </section>
+            </div>
+        </main>
+        
+        <%- include('../partials/footer') %>
+    </div>
+
+    <script src="/js/script.js" defer></script>
+</body>
+</html>

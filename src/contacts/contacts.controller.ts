@@ -1,34 +1,57 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Render, Redirect } from '@nestjs/common';
 import { ContactsService } from './contacts.service';
 import { CreateContactDto } from './dto/create-contact.dto';
 import { UpdateContactDto } from './dto/update-contact.dto';
 
-@Controller('contacts')
+@Controller('admin/contacts')
 export class ContactsController {
   constructor(private readonly contactsService: ContactsService) {}
 
-  @Post()
-  create(@Body() createContactDto: CreateContactDto) {
-    return this.contactsService.create(createContactDto);
-  }
-
   @Get()
-  findAll() {
-    return this.contactsService.findAll();
+  @Render('pages/admin-contacts')
+  async findAll() {
+    const contacts = await this.contactsService.findAll();
+    return {
+      title: 'ROYAL TRAVEL - Quản lý liên hệ',
+      isLoggedIn: false,
+      username: null,
+      contacts: contacts,
+      currentPath: '/admin/contacts',
+      showBanner: false,
+    };
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.contactsService.findOne(+id);
+  @Render('pages/admin-contact-detail')
+  async findOne(@Param('id') id: string) {
+    const contact = await this.contactsService.findOne(id);
+    if (!contact) return { redirect: '/admin/contacts' };
+    return {
+      title: 'ROYAL TRAVEL - Chi tiết liên hệ',
+      isLoggedIn: false,
+      username: null,
+      contact: contact,
+      currentPath: '/admin/contacts',
+      showBanner: false,
+    };
+  }
+
+  @Post()
+  async create(@Body() createContactDto: CreateContactDto) {
+    const contact = await this.contactsService.create(createContactDto);
+    return { url: `/admin/contacts/${contact.id}` };
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateContactDto: UpdateContactDto) {
-    return this.contactsService.update(+id, updateContactDto);
+  async update(@Param('id') id: string, @Body() updateContactDto: UpdateContactDto) {
+    await this.contactsService.update(id, updateContactDto);
+    return { url: `/admin/contacts/${id}` };
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.contactsService.remove(+id);
+  @Redirect('/admin/contacts')
+  async remove(@Param('id') id: string) {
+    await this.contactsService.remove(id);
+    return { url: '/admin/contacts' };
   }
 }

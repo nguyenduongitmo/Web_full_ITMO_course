@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-wrapper">
+        <%- include('../partials/header', { isLoggedIn, username, currentPath }) %>
+        
+        <main class="main">
+            <div class="container">
+                <section class="section admin-section">
+                    <div class="section__header">
+                        <h1 class="section__title">Quản lý liên hệ</h1>
+                        <p class="section__subtitle">Danh sách các yêu cầu tư vấn</p>
+                        <p style="margin-top: 8px; color: var(--gray-500); font-size: 14px;">
+                            Tổng số: <strong><%= contacts.length %></strong> liên hệ
+                        </p>
+                    </div>
+
+                <% if (contacts.length > 0) { %>
+                    <div class="table-responsive">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Khách hàng</th>
+                                    <th>Email</th>
+                                    <th>Điện thoại</th>
+                                    <th>Tin nhắn</th>
+                                    <th>Ngày</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% contacts.forEach(function(contact, index) { %>
+                                    <tr>
+                                        <td><%= index + 1 %></td>
+                                        <td><strong><%= contact.name %></strong></td>
+                                        <td><%= contact.email %></td>
+                                        <td><%= contact.phone || 'N/A' %></td>
+                                        <td><%= contact.message.substring(0, 40) %><%= contact.message.length > 40 ? '...' : '' %></td>
+                                        <td><%= new Date(contact.createdAt).toLocaleDateString('vi-VN') %></td>
+                                        <td>
+                                            <a href="/admin/contacts/<%= contact.id %>" class="btn btn-view">Xem</a>
+                                        </td>
+                                    </tr>
+                                <% }); %>
+                            </tbody>
+                        </table>
+                    </div>
+                <% } else { %>
+                    <div class="empty-state">
+                        <p>Chưa có liên hệ nào</p>
+                    </div>
+                <% } %>
+            </div>
+            </section>
+        </main>
+        
+        <%- include('../partials/footer') %>
+    </div>
+
+    <script src="/js/script.js" defer></script>
+</body>
+</html>
