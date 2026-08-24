@@ -9,7 +9,7 @@ import { ToursModule } from './tours/tours.module';
 
 
 @Module({
-  imports: [PrismaModule, ToursModule, BookingsModule, FeedbacksModule, ContactsModule],
+  imports: [PrismaModule, ToursModule],//BookingsModule, FeedbacksModule, ContactsModule],
   controllers: [AppController],
   providers: [AppService],
 })
