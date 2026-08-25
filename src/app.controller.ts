@@ -1,4 +1,4 @@
-import { Controller, Get, Render } from '@nestjs/common';
+import { Controller, Get, Render, Param } from '@nestjs/common';
 import { AppService } from './app.service';
 
 @Controller()
@@ -14,11 +14,28 @@ export class AppController {
       ...data,
       currentPath: '/',
       showBanner: true,
-      searchQuery: '', 
+      searchQuery: '',
     };
   }
 
   // Trang tour
+
+  @Get('tours/:id')
+  @Render('pages/tour-detail')
+  async getTourDetail(@Param('id') id: string) {
+    const tour = await this.appService.getTourDetail(id);
+    if (!tour) return { redirect: '/tours' };
+    return {
+      title: `ROYAL TRAVEL - ${tour.name}`,
+      isLoggedIn: false,
+      username: null,
+      tour: tour,
+      currentPath: '/tours',
+      showBanner: false,
+      includeSSE: true,
+    };
+  }
+  
   @Get('tours')
   @Render('pages/tours')
   async getToursPage() {
@@ -27,9 +44,11 @@ export class AppController {
       ...data,
       currentPath: '/tours',
       showBanner: false,
-      searchQuery: '', 
+      searchQuery: '',
     };
   }
+
+  
 
   // Trang liên hệ
   @Get('contact')
@@ -40,7 +59,7 @@ export class AppController {
       ...data,
       currentPath: '/contact',
       showBanner: false,
-      searchQuery: '', 
+      searchQuery: '',
       extraScripts: `
         <script src="/js/feedback.js" defer></script>
         <script src="/js/api-feedback.js" defer></script>

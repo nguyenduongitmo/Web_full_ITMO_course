@@ -1,87 +1,86 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title %></title>
-    
+    <title>
+        <%= title %>
+    </title>
+
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/responsive.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
 </head>
+
 <body>
     <div class="app-wrapper">
         <%- include('../partials/header', { isLoggedIn, username, currentPath }) %>
-        
-        <main class="main">
-            <div class="container">
-                <section class="section tours-header">
-                    <div class="section__header">
-                        <h1 class="section__title">Tất cả tour du lịch</h1>
-                        <p class="section__subtitle">
-                            <%= tours.length %> tour đang chờ bạn khám phá
-                            <% if (searchQuery) { %> - Kết quả tìm kiếm: "<%= searchQuery %>"<% } %>
-                        </p>
-                        <div class="header-actions">
-                            <a href="/tours/create" class="btn btn-primary">+ Thêm tour mới</a>
+            <main class="main">
+                <div class="container">
+                    <section class="section tours-header">
+                        <div class="section__header">
+                            <h1 class="section__title">Tất cả tour du lịch</h1>
+                            <p class="section__subtitle">
+                                <%= tours.length %> tour đang chờ bạn khám phá
+                            </p>
                         </div>
-                    </div>
-                </section>
 
-                <% if (tours.length > 0) { %>
-                    <div class="tour__grid">
-                        <% tours.forEach(function(tour) { %>
-                            <article class="tour__card">
-                                <div class="tour__card-image">
-                                    <img src="/images/<%= tour.image %>" alt="<%= tour.name %>">
-                                    <% if (tour.isFeatured) { %>
-                                        <span class="tour__badge">Nổi bật</span>
-                                    <% } %>
-                                </div>
-                                <div class="tour__card-body">
-                                    <h3 class="tour__title"><%= tour.name %></h3>
-                                    <p class="tour__desc"><%= tour.description %></p>
-                                    <div class="tour__card-footer">
-                                        <div class="tour__price">
-                                            <span class="price-amount"><%= tour.price %> USD</span>
-                                            <span class="price-label">/ mỗi người</span>
+
+                        <% if (tours.length> 0) { %>
+                            <div class="tour__grid">
+                                <% tours.forEach(function(tour) { %>
+                                    <article class="tour__card">
+                                        <div class="tour__card-image">
+                                            <img src="/images/<%= tour.image %>" alt="<%= tour.name %>">
+                                            <% if (tour.isFeatured) { %>
+                                                <span class="tour__badge">Nổi bật</span>
+                                                <% } %>
                                         </div>
-                                        <div class="tour__duration">
-                                            <%= tour.duration %>
+                                        <div class="tour__card-body">
+                                            <h3 class="tour__title">
+                                                <%= tour.name %>
+                                            </h3>
+                                            <p class="tour__desc">
+                                                <%= tour.description %>
+                                            </p>
+                                            <div class="tour__card-footer">
+                                                <div class="tour__price">
+                                                    <span class="price-amount">
+                                                        <%= tour.price %> USD
+                                                    </span>
+                                                    <span class="price-label">/ mỗi người</span>
+                                                </div>
+                                                <div class="tour__duration">
+                                                    <%= tour.duration %>
+                                                </div>
+                                            </div>
+                                            <div class="tour__code">Mã tour: <%= tour.code %>
+                                            </div>
+                                            <a href="/tours/<%= tour.id %>" class="btn btn-primary btn-block">Xem chi
+                                                tiết</a>
                                         </div>
-                                    </div>
-                                    <div class="tour__code">
-                                        Mã tour: <%= tour.code %>
-                                    </div>
-                            
-                                        <!-- Các nút action - tạm thời ai cũng thấy -->
-                                    <div class="tour-actions">
-                                        <a href="/tours/<%= tour.id %>" class="btn btn-view">Xem chi tiết</a>
-                                        <a href="/tours/<%= tour.id %>/edit" class="btn btn-edit">Sửa</a>
-                                        <form action="/tours/<%= tour.id %>" method="POST" style="margin:0;">
-                                            <input type="hidden" name="_method" value="DELETE">
-                                            <button type="submit" class="btn btn-delete" onclick="return confirm('Bạn có chắc muốn xóa tour này?')">Xóa</button>
-                                        </form>
-                                    </div>
+                                    </article>
+                                    <% }); %>
+                            </div>
+                            <% } else { %>
+                                <div class="empty-state">
+                                    <h3>Không tìm thấy tour</h3>
+                                    <p>Vui lòng thử lại với từ khóa khác</p>
+                                    <a href="/tours" class="btn btn-primary">Xem tất cả tour</a>
                                 </div>
-                            </article>
-                        <% }); %>
-                    </div>
-                <% } else { %>
-                    <div class="empty-state">
-                        <h3>Không tìm thấy tour</h3>
-                        <p>Vui lòng thử lại với từ khóa khác</p>
-                        <a href="/tours" class="btn btn-primary">Xem tất cả tour</a>
-                    </div>
-                <% } %>
-            </div>
-        </main>
-        
-        <%- include('../partials/footer') %>
+                                <% } %>
+                </div>
+                </section>
+            </main>
+
+            <%- include('../partials/footer') %>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="/js/script.js" defer></script>
+    <script src="/js/sse-client.js" defer></script>
 </body>
 </html>

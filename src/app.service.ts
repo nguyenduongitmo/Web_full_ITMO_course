@@ -45,6 +45,12 @@ export class AppService {
     };
   }
 
+   async getTourDetail(id: string) {
+    return await this.prisma.tour.findUnique({
+      where: { id },
+    });
+  }
+
   // Trang liên hệ
   async getContactPageData() {
     return {

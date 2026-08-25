@@ -50,12 +50,12 @@
                             <button type="submit" class="btn btn-delete" onclick="return confirm('Xóa đơn đặt tour này?')">Xóa</button>
                         </form>
                     </div>
-                    <div class="booking-status-form">
-    <h3>Cập nhật trạng thái</h3>
+                    <div class="booking-status-form" style="margin: 20px 0; padding: 20px; background: var(--gray-100); border-radius: 12px;">
+    <h4 style="margin-bottom: 12px; color: var(--primary-color);">Cập nhật trạng thái</h4>
     <form action="/admin/bookings/<%= booking.id %>/status" method="POST">
         <input type="hidden" name="_method" value="PATCH">
         <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
-            <select name="status" class="form-select" style="padding: 8px 16px; border-radius: 8px; border: 1px solid var(--gray-300);">
+            <select name="status" class="form-select" style="padding: 10px 16px; border-radius: 8px; border: 1px solid var(--gray-300); background: white; font-size: 14px; min-width: 180px;">
                 <option value="PENDING" <%= booking.status === 'PENDING' ? 'selected' : '' %>>Chờ xác nhận</option>
                 <option value="CONFIRMED" <%= booking.status === 'CONFIRMED' ? 'selected' : '' %>>Đã xác nhận</option>
                 <option value="PROCESSING" <%= booking.status === 'PROCESSING' ? 'selected' : '' %>>Đang xử lý</option>
@@ -63,7 +63,7 @@
                 <option value="DELIVERED" <%= booking.status === 'DELIVERED' ? 'selected' : '' %>>Đã nhận</option>
                 <option value="CANCELLED" <%= booking.status === 'CANCELLED' ? 'selected' : '' %>>Đã hủy</option>
             </select>
-            <button type="submit" class="btn btn-primary">Cập nhật</button>
+            <button type="submit" class="btn btn-primary" style="padding: 10px 24px;">Cập nhật</button>
         </div>
     </form>
 </div>

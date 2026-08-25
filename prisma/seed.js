@@ -143,10 +143,11 @@ async function main() {
 
   //  BOOKINGS 
   if (tours.length >= 3 && users.length >= 1) {
-    console.log('\, Bắt đầu seed bookings...');
+    console.log('\nBắt đầu seed bookings...');
     
     const bookingsData = [
-      {
+      { 
+        bookingCode: 'BOOK-00001',
         userId: users[0].id,
         tourId: tours[0].id,
         fullName: 'Tran Van B',
@@ -157,6 +158,7 @@ async function main() {
         status: 'CONFIRMED',
       },
       {
+        bookingCode: 'BOOK-00002',
         userId: users[0].id,
         tourId: tours[1].id,
         fullName: 'Le Thi C',
@@ -167,6 +169,7 @@ async function main() {
         status: 'PENDING',
       },
       {
+        bookingCode: 'BOOK-00003',
         userId: users[users.length - 1]?.id || users[0].id,
         tourId: tours[2].id,
         fullName: 'Pham Van D',
@@ -255,7 +258,7 @@ async function main() {
     }
   }
 
-  console.log('\n TỔNG KẾT SEED ');
+  console.log('\nTỔNG KẾT SEED: ');
   const totalUsers = await prisma.user.count();
   const totalTours = await prisma.tour.count();
   const totalBookings = await prisma.booking.count();

@@ -15,15 +15,6 @@
         
         <main class="main">
             <div class="container">
-                <% if (!tour) { %>
-    <section class="section">
-        <div class="section__header">
-            <h1 class="section__title">Không tìm thấy tour</h1>
-            <p>Tour bạn tìm kiếm không tồn tại.</p>
-            <a href="/tours" class="btn btn-primary">Quay lại danh sách</a>
-        </div>
-    </section>
-<% } else { %>
                 <section class="section tour-detail">
                     <div class="section__header">
                         <h1 class="section__title"><%= tour.name %></h1>
@@ -42,24 +33,17 @@
                             <p><strong>Mô tả:</strong></p>
                             <p><%= tour.description %></p>
                             
-                            <!-- KHÔNG PHÂN QUYỀN - Tạm thời ai cũng thấy được -->
-                            <div class="tour-detail__actions">
-                                <a href="/tours/<%= tour.id %>/edit" class="btn btn-edit">Sửa tour</a>
-                                <form action="/tours/<%= tour.id %>" method="POST" style="display:inline;">
-                                    <input type="hidden" name="_method" value="DELETE">
-                                    <button type="submit" class="btn btn-delete" onclick="return confirm('Bạn có chắc muốn xóa tour này?')">Xóa tour</button>
-                                </form>
-                            </div>
                         </div>
                     </div>
                 </section>
-            <% } %>
             </div>
         </main>
         
         <%- include('../partials/footer') %>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="/js/script.js" defer></script>
+    <script src="/js/sse-client.js" defer></script>
 </body>
 </html>

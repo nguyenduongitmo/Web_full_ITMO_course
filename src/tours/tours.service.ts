@@ -12,10 +12,21 @@ export class ToursService {
   constructor(private prisma: PrismaService){}
 
   async generateTourCode(): Promise<string> {
-    // Đếm số lượng tour hiện có
-    const count = await this.prisma.tour.count();
-    // Tạo số thứ tự (ví dụ: 1 -> 01, 10 ->10)
-    const sequence = String(count + 1).padStart(2, '0');
+    const tours = await this.prisma.tour.findMany({
+      select: { code: true },
+    });
+    
+    let maxNumber = 0;
+    tours.forEach(tour => {
+      // Regex để trích xuất số từ code
+      const match = tour.code.match(/#ROYAL-(\d+)-VN-RU/);
+      if (match) {
+        const num = parseInt(match[1]);
+        if (num > maxNumber) maxNumber = num;
+      }
+    });
+    
+    const sequence = String(maxNumber + 1).padStart(2, '0');
     return `#ROYAL-${sequence}-VN-RU`;
   }
 
@@ -49,12 +60,21 @@ export class ToursService {
     });
   }
 
-  async findAll() {
-    // findMay = lấy tất cả record
-    return await this.prisma.tour.findMany({
-      orderBy: {name: 'asc'},
-    });
+  async findAll(searchQuery?: string) {
+  const where: any = {};
+  
+  if (searchQuery) {
+    where.OR = [
+      { name: { contains: searchQuery } },
+      { description: { contains: searchQuery } },
+    ];
   }
+  
+  return await this.prisma.tour.findMany({
+    where,
+    orderBy: { name: 'asc' },
+  });
+}
 
   async findOne(id: string) {
     // findUnique = tìm theo id duy nhất, lấy 1 tour theo id

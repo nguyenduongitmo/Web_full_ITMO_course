@@ -2227,10 +2227,11 @@ img {
 /*  STATUS BADGE  */
 .status-badge {
     display: inline-block;
-    padding: 4px 12px;
+    padding: 4px 14px;
     border-radius: 20px;
     font-size: 12px;
     font-weight: 600;
+    letter-spacing: 0.3px;
 }
 
 .status-pending {
@@ -2263,5 +2264,22 @@ img {
     color: #991b1b;
 }
 
+/* Form select styling */
+.form-select {
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--gray-300);
+    background: white;
+    font-size: 14px;
+    min-width: 180px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.form-select:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.2);
+}
 
 

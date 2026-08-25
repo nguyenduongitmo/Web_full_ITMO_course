@@ -1,100 +1,121 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Render, Query, Redirect} from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Render, Query, Redirect, Sse } from '@nestjs/common';
+import { Observable, Subject } from 'rxjs';
 import { ToursService } from './tours.service';
 import { CreateTourDto } from './dto/create-tour.dto';
 import { UpdateTourDto } from './dto/update-tour.dto';
-import { STATUS_CODES } from 'http';
 
-@Controller('tours') // Tất cả các route trong controller này đều bắt đầu bằng "/tours"
+@Controller('admin/tours')
 export class ToursController {
   constructor(private readonly toursService: ToursService) {} 
+  private tourEvents = new Subject<any>();
 
-  // 1. DANH SÁCH TOUR - Tạm thời ai cũng xem
-  // Route: GET / tours
-  // Thêm @Render để trả về trang HTML thay vì JSON
-  @Get() // Xử lý GET request đến /tours
-  @Render('pages/tours') // Render file views/pages/tours.ejs
-  async findAll() {
-    const tours = await this.toursService.findAll();
-    return {
-      title: 'ROYAL TRAVEL - Tour du lịch',
-      isLoggedIn: false,
-      username: null,
-      tours: tours,
-      currentPath: '/tours',
-      showBanner: false,
-    };
-  }
-
-  // 2. TRANG TẠO TOUR - Tạm thời ai cũng vào
   @Get('create')
-  @Render('pages/tour-create')
+  @Render('pages/admin-tour-create')
   createPage() {
     return {
       title: 'ROYAL TRAVEL - Tạo tour mới',
-      isLoggedIn: false,
-      username: null,
-      currentPath: '/tours',
+      isLoggedIn: true,
+      username: 'Admin',
+      currentPath: '/admin/tours',
       showBanner: false,
     };
   }
 
-
-  // 3. CHI TIẾT TOUR - Tạm thời ai cũng xem
-  // Route: GET /tours/abc123
-  @Get(':id')// Định nghĩa route có tham số
-  @Render('pages/tour-detail')
-  async findOne(@Param('id') id: string) { // lấy tham số từ URL
-    const tour = await this.toursService.findOne(id);
-    return {
-    title: `ROYAL TRAVEL - ${tour?.name || "Tour"}`,
-    isLoggedIn: false,
-    username: null,
-    tour: tour,
-    currentPath: '/tours',
-    showBanner: false,
-    };
-  }
-
-
-  // 4. TRANG CHỈNH SỬA TOUR - Tạm thời ai cũng vào được
   @Get(':id/edit')
-  @Render('pages/tour-edit')
+  @Render('pages/admin-tour-edit')
   async editPage(@Param('id') id: string) {
     const tour = await this.toursService.findOne(id);
+    if (!tour) return { redirect: '/admin/tours' };
     return {
       title: 'ROYAL TRAVEL - Sửa tour',
-      isLoggedIn: false,
-      username: null,
+      isLoggedIn: true,
+      username: 'Admin',
       tour: tour,
-      currentPath: '/tours',
+      currentPath: '/admin/tours',
       showBanner: false,
     };
   }
 
-  // 5. API TẠO TOUR - Tạm thời ai cũng gọi được
-  @Post()
-  @Redirect('/tours')
-  async create(@Body() createTourDto: CreateTourDto) {
-    const tour = await this.toursService.create(createTourDto);
-    return { 
-      url: `/tours/${tour.id}` };
-  }
-
-  // 6. API CẬP NHẬT TOUR - Tạm thời ai cũng gọi được
-  @Patch(':id')
-  @Redirect('/tours')
-  async update(@Param('id') id: string, @Body() updateTourDto: UpdateTourDto) {
-    const tour = await this.toursService.update(id, updateTourDto);
-    return { 
-      url: `/tours/${id}` 
+  @Get()
+  @Render('pages/admin-tours')
+  async findAll() {
+    const tours = await this.toursService.findAll();
+    return {
+      title: 'ROYAL TRAVEL - Quản lý tour',
+      isLoggedIn: true,
+      username: 'Admin',
+      tours: tours,
+      currentPath: '/admin/tours',
+      showBanner: false,
     };
   }
 
-  // 7. API XÓA TOUR - Tạm thời ai cũng gọi được
+  @Post()
+  @Redirect('/admin/tours')
+  async create(@Body() createTourDto: CreateTourDto) {
+    const tour = await this.toursService.create(createTourDto);
+    
+    const eventData = {
+      type: 'create',
+      message: `Tour "${tour.name}" đã được tạo!`,
+      timestamp: new Date().toISOString(),
+    };
+    
+    this.tourEvents.next(eventData);
+    await new Promise(resolve => setTimeout(resolve, 300));
+    return { url: '/admin/tours' };
+  }
+
+  @Patch(':id')
+  @Redirect('/admin/tours')
+  async update(@Param('id') id: string, @Body() updateTourDto: UpdateTourDto) {
+    const tour = await this.toursService.update(id, updateTourDto);
+    
+    const eventData = {
+      type: 'update',
+      message: `Tour "${tour.name}" đã được cập nhật!`,
+      timestamp: new Date().toISOString(),
+    };
+    
+    this.tourEvents.next(eventData);
+    await new Promise(resolve => setTimeout(resolve, 300));
+    return { url: '/admin/tours' };
+  }
+
   @Delete(':id')
-  @Redirect('/tours')
+  @Redirect('/admin/tours')
   async remove(@Param('id') id: string) {
+    const tour = await this.toursService.findOne(id);
     await this.toursService.remove(id);
-    return { url: '/tours' };
+    
+    const eventData = {
+      type: 'delete',
+      message: `Tour "${tour?.name || '#' + id}" đã bị xóa!`,
+      timestamp: new Date().toISOString(),
+    };
+    
+    this.tourEvents.next(eventData);
+    await new Promise(resolve => setTimeout(resolve, 300));
+    return { url: '/admin/tours' };
+  }
+
+  @Sse('events')
+  sse(): Observable<any> {
+    return new Observable((observer) => {
+      const subscription = this.tourEvents.subscribe({
+        next: (data) => {
+          observer.next({
+            data: JSON.stringify(data),
+            type: data.type,
+          });
+        },
+        error: (err) => observer.error(err),
+        complete: () => observer.complete(),
+      });
+      
+      return () => {
+        subscription.unsubscribe();
+      };
+    });
   }
 }

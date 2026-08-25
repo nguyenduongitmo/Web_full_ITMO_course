@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ROYAL TRAVEL - Tạo tour mới</title>
+    <title>ROYAL TRAVEL - Chỉnh sửa tour</title>
     
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/responsive.css">
@@ -17,55 +17,54 @@
             <div class="container">
                 <section class="section tour-form">
                     <div class="section__header">
-                        <h1 class="section__title">Tạo tour mới</h1>
-                        <a href="/tours" class="btn btn-outline">← Quay lại danh sách</a>
+                        <h1 class="section__title">Chỉnh sửa tour</h1>
+                        <a href="admin/tours/<%= tour.id %>" class="btn btn-outline">← Quay lại chi tiết</a>
                     </div>
                     
-                    <form action="/tours" method="POST" style="max-width: 600px; margin: 0 auto;">
+                    <form action="/admin/tours/<%= tour.id %>" method="POST" style="max-width: 600px; margin: 0 auto;">
+                         <input type="hidden" name="_method" value="PATCH">
+                        
                         <div class="form-group">
                             <label>Tên tour *</label>
-                            <input type="text" name="name" required placeholder="Ví dụ: Tour khám phá Moscow">
+                            <input type="text" name="name" required value="<%= tour.name %>">
                         </div>
                         
                         <div class="form-group">
                             <label>Hình ảnh</label>
-                            <input type="text" name="image" placeholder="tenhinh.jpg">
+                            <input type="text" name="image" value="<%= tour.image %>">
                         </div>
                         
                         <div class="form-group">
                             <label>Mô tả *</label>
-                            <textarea name="description" rows="5" required placeholder="Mô tả chi tiết về tour..."></textarea>
+                            <textarea name="description" rows="5" required><%= tour.description %></textarea>
                         </div>
                         
                         <div class="form-group">
-                            <label>Mã tour</label>
-                            <input type="text" name="code" placeholder="Nhập mã tour hoặc để trống để tự động tạo mã">
-                            <small style="color: #64748b; display: block; margin-top: 4px;">
-                                Nếu để trống, hệ thống sẽ tự động tạo mã theo định dạng #ROYAL-XX-VN-RU
-                            </small>
+                            <label>Mã tour *</label>
+                            <input type="text" name="code" required value="<%= tour.code %>">
                         </div>
                         
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                             <div class="form-group">
                                 <label>Giá (USD)</label>
-                                <input type="number" name="price" step="0.01" placeholder="500">
+                                <input type="number" name="price" step="0.01" value="<%= tour.price %>">
                             </div>
                             <div class="form-group">
                                 <label>Thời gian</label>
-                                <input type="text" name="duration" placeholder="5 ngày 4 đêm">
+                                <input type="text" name="duration" value="<%= tour.duration %>">
                             </div>
                         </div>
                         
                         <div class="form-group">
                             <label>
-                                <input type="checkbox" name="isFeatured" value="true">
+                                <input type="checkbox" name="isFeatured" value="true" <%= tour.isFeatured ? 'checked' : '' %>>
                                 Tour nổi bật
                             </label>
                         </div>
                         
                         <div class="tour-form-actions">
-                            <button type="submit" class="btn btn-primary">Tạo tour</button>
-                            <a href="/tours" class="btn btn-cancel">Hủy</a>
+                            <button type="submit" class="btn btn-primary">Cập nhật tour</button>
+                            <a href="/tours/<%= tour.id %>" class="btn btn-cancel">Hủy</a>
                         </div>
                     </form>
                 </section>
@@ -76,5 +75,6 @@
     </div>
 
     <script src="/js/script.js" defer></script>
+    <script src="/js/sse-client.js" defer></script>
 </body>
 </html>
