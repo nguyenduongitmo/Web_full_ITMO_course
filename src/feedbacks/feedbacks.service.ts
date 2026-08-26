@@ -9,8 +9,9 @@ export class FeedbacksService {
 
   async create(createFeedbackDto: CreateFeedbackDto) {
     const data = {
-      name: createFeedbackDto.name,
+      fullName: createFeedbackDto.fullName,
       email: createFeedbackDto.email,
+      rating: Number(createFeedbackDto.rating) || 5,
       comment: createFeedbackDto.comment,
       tourId: createFeedbackDto.tourId || null,
       userId: createFeedbackDto.userId || null,
@@ -23,7 +24,7 @@ export class FeedbacksService {
       orderBy: { createdAt: 'desc' },
       include: {
         tour: { select: { id: true, name: true } },
-        user: { select: { id: true, name: true, email: true } },
+        user: { select: { id: true, fullName: true, email: true } },
       },
     });
   }
@@ -33,7 +34,7 @@ export class FeedbacksService {
       where: { id },
       include: {
         tour: { select: { id: true, name: true } },
-        user: { select: { id: true, name: true, email: true } },
+        user: { select: { id: true, fullName: true, email: true } },
       },
     });
     if (!feedback) {
@@ -51,8 +52,10 @@ export class FeedbacksService {
 
   async update(id: string, updateFeedbackDto: UpdateFeedbackDto) {
     const data: any = {};
-    if (updateFeedbackDto.name) data.name = updateFeedbackDto.name;
+    if (updateFeedbackDto.fullName) data.fullName = updateFeedbackDto.fullName;
     if (updateFeedbackDto.email) data.email = updateFeedbackDto.email;
+    if (updateFeedbackDto.rating !== undefined && updateFeedbackDto.rating !== null) {
+    data.rating = Number(updateFeedbackDto.rating);}
     if (updateFeedbackDto.comment) data.comment = updateFeedbackDto.comment;
     if (updateFeedbackDto.tourId) data.tourId = updateFeedbackDto.tourId;
 

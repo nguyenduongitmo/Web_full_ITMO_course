@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-wrapper">
+        <%- include('../partials/header', { isLoggedIn, username, currentPath }) %>
+        
+        <main class="main">
+            <div class="container">
+                <section class="section">
+                    <div class="section__header">
+                        <h1 class="section__title">Chi tiết tour</h1>
+                        <a href="/admin/tours" class="btn btn-outline">← Quay lại danh sách</a>
+                    </div>
+
+                    <div style="max-width: 700px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
+                        <!-- HÌNH ẢNH -->
+                        <div style="margin-bottom: 24px;">
+                            <img src="/images/<%= tour.image %>" 
+                                 alt="<%= tour.name %>" 
+                                 style="width: 100%; max-height: 350px; object-fit: cover; border-radius: 10px;">
+                        </div>
+                        
+                        <!-- THÔNG TIN CHI TIẾT -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <div><strong>Tên tour:</strong></div>
+                            <div><%= tour.name %></div>
+                            
+                            <div><strong>Mã tour:</strong></div>
+                            <div><%= tour.code %></div>
+                            
+                            <div><strong>Giá:</strong></div>
+                            <div><%= tour.price ? '$' + tour.price : '---' %></div>
+                            
+                            <div><strong>Thời gian:</strong></div>
+                            <div><%= tour.duration || '---' %></div>
+                            
+                            <div><strong>Nổi bật:</strong></div>
+                            <div><%= tour.isFeatured ? '⭐ Có' : 'Không' %></div>
+                            
+                            <div><strong>Hình ảnh:</strong></div>
+                            <div>
+                                <img src="/images/<%= tour.image %>" 
+                                     alt="<%= tour.name %>" 
+                                     style="width: 80px; height: 60px; object-fit: cover; border-radius: 6px; border: 1px solid var(--gray-300);">
+                            </div>
+                            
+                            <div><strong>Mô tả:</strong></div>
+                            <div style="grid-column: span 2;"><%= tour.description %></div>
+                            
+                            <div><strong>Ngày tạo:</strong></div>
+                            <div><%= new Date(tour.createdAt).toLocaleDateString('vi-VN') %></div>
+                        </div>
+                        
+                        <!-- NÚT SỬA / XÓA -->
+                        <div style="display: flex; gap: 12px; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--gray-300);">
+                            <a href="/admin/tours/<%= tour.id %>/edit" class="btn btn-primary" style="flex:1; text-align: center;">Sửa</a>
+                            <form action="/admin/tours/<%= tour.id %>" method="POST" style="flex:1;">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <button type="submit" class="btn btn-delete" style="width:100%;" onclick="return confirm('Xóa tour này?')">Xóa</button>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+        
+        <%- include('../partials/footer') %>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="/js/script.js" defer></script>
+    <script src="/js/sse-client.js" defer></script>
+</body>
+</html>

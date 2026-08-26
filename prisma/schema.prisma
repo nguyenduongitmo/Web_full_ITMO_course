@@ -7,28 +7,28 @@ datasource db {
   url = env("DATABASE_URL")
 }
 
-// 1. User (cho auth sau)
+// 1. User
 model User {
   id        String    @id @default(cuid())
   email     String    @unique
-  name      String
-  password  String    // sẽ dùng cho lab 7
-  role      String     @default("USER")  // giá trị: "USER" hoặc "ADMIN"
+  fullName  String   
+  password  String
+  role      String    @default("USER")
   feedbacks Feedback[]
   bookings  Booking[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 }
 
-// 2. Tour (sản phẩm chính)
+// 2. Tour
 model Tour {
   id          String   @id @default(cuid())
-  name        String
+  name        String   
   image       String
   description String
-  code        String   @unique  // ví dụ: #ROYAL-01-VN-RU
-  price       Float?            // thêm giá tour
-  duration    String?           // thêm thời gian: "5 ngày 4 đêm"
+  code        String   @unique
+  price       Float?
+  duration    String?
   isFeatured  Boolean  @default(false)
   feedbacks   Feedback[]
   bookings    Booking[] 
@@ -36,28 +36,29 @@ model Tour {
   updatedAt   DateTime @updatedAt
 }
 
-// 3. Feedback (phản hồi từ khách hàng)
+// 3. Feedback
 model Feedback {
   id        String   @id @default(cuid())
-  name      String
+  fullName  String 
   email     String
   comment   String
-  tourId    String?  // có thể feedback về 1 tour cụ thể
+  rating    Int      @default(5) // ← Thêm rating
+  tourId    String?
   tour      Tour?    @relation(fields: [tourId], references: [id])
-  userId    String?  // nếu user đã đăng nhập
+  userId    String?
   user      User?    @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
 }
 
-// 4. Booking (đặt tour - cho lab 3,4)
+// 4. Booking
 model Booking {
   id          String   @id @default(cuid())
-  bookingCode String   @unique  // thêm mã booking
+  bookingCode String   @unique
   userId      String
   user        User     @relation(fields: [userId], references: [id])
   tourId      String
   tour        Tour     @relation(fields: [tourId], references: [id])
-  fullName    String
+  fullName    String   
   email       String
   phone       String
   travelDate  DateTime
@@ -67,13 +68,13 @@ model Booking {
   updatedAt   DateTime @updatedAt
 }
 
-// 5. Contact (liên hệ từ form)
+// 5. Contact
 model Contact {
   id          String   @id @default(cuid())
-  name        String
+  fullName    String  
   email       String
   phone       String?
-  interest    String?   // loại tour quan tâm
+  interest    String?
   destination String?
   budget      String?
   travelDate  String?
@@ -81,4 +82,3 @@ model Contact {
   subscribe   Boolean  @default(false)
   createdAt   DateTime @default(now())
 }
-

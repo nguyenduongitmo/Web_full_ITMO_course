@@ -20,31 +20,38 @@
                         <h1 class="section__title">Chi tiết đánh giá</h1>
                         <a href="/admin/feedbacks" class="btn btn-outline">← Quay lại danh sách</a>
                     </div>
-                    
-                    <div class="tour-detail__grid">
-                        <div class="tour-detail__info">
-                            <h3>Thông tin khách hàng</h3>
-                            <p><strong>Họ tên:</strong> <%= feedback.name %></p>
-                            <p><strong>Email:</strong> <%= feedback.email %></p>
-                            <p><strong>Tour:</strong> <%= feedback.tour?.name || 'Không có' %></p>
-                            <p><strong>Ngày gửi:</strong> <%= new Date(feedback.createdAt).toLocaleString('vi-VN') %></p>
+
+                    <div style="max-width: 700px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <div><strong>Tên khách hàng:</strong></div>
+                            <div><%= feedback.fullName %></div>
+                            
+                            <div><strong>Email:</strong></div>
+                            <div><%= feedback.email %></div>
+                            
+                            <div><strong>Đánh giá:</strong></div>
+                            <div>
+                                <span style="color: #f59e0b; font-size: 20px;">
+                                    <% for (let i = 0; i < feedback.rating; i++) { %>★<% } %>
+                                    <% for (let i = feedback.rating; i < 5; i++) { %>☆<% } %>
+                                </span>
+                                (<%= feedback.rating %>/5)
+                            </div>
+                            
+                            <div><strong>Nội dung:</strong></div>
+                            <div><%= feedback.comment || 'Không có nội dung' %></div>
+                            
+                            <div><strong>Ngày gửi:</strong></div>
+                            <div><%= new Date(feedback.createdAt).toLocaleDateString('vi-VN') %></div>
                         </div>
-                        <div class="tour-detail__info">
-                            <h3>Đánh giá</h3>
-                            <p style="font-size: 28px; color: #f59e0b; letter-spacing: 4px; margin-top: 8px;">
-                                <%= '★'.repeat(feedback.rating || 0) %><%= '☆'.repeat(5 - (feedback.rating || 0)) %>
-                            </p>
-                            <p style="background: var(--gray-100); padding: 16px; border-radius: 8px; margin-top: 12px;">
-                                <%= feedback.comment %>
-                            </p>
+                        
+                        <div style="display: flex; gap: 12px; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--gray-300);">
+                            <a href="/admin/feedbacks/<%= feedback.id %>/edit" class="btn btn-primary" style="flex:1;">Sửa</a>
+                            <form action="/admin/feedbacks/<%= feedback.id %>" method="POST" style="flex:1;">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <button type="submit" class="btn btn-delete" style="width:100%;" onclick="return confirm('Xóa đánh giá này?')">Xóa</button>
+                            </form>
                         </div>
-                    </div>
-                    
-                    <div class="tour-detail__actions">
-                        <form action="/admin/feedbacks/<%= feedback.id %>" method="POST" style="display:inline;">
-                        <input type="hidden" name="_method" value="DELETE">
-                        <button type="submit" class="btn btn-delete" onclick="return confirm('Xóa đánh giá này?')">Xóa</button>
-                        </form>
                     </div>
                 </section>
             </div>

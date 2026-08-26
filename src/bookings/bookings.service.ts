@@ -52,7 +52,7 @@ export class BookingsService {
     return await this.prisma.booking.findMany({
       orderBy: { createdAt: 'desc' },
       include: {
-        user: { select: { id: true, name: true, email: true } },
+        user: { select: { id: true, fullName: true, email: true } },
         tour: { select: { id: true, name: true, code: true, price: true } },
       },
     });
@@ -62,7 +62,7 @@ export class BookingsService {
     const booking = await this.prisma.booking.findUnique({
       where: { id },
       include: {
-        user: { select: { id: true, name: true, email: true } },
+        user: { select: { id: true, fullName: true, email: true } },
         tour: { select: { id: true, name: true, code: true, price: true, image: true } },
       },
     });
@@ -86,7 +86,9 @@ export class BookingsService {
     if (updateBookingDto.email) data.email = updateBookingDto.email;
     if (updateBookingDto.phone) data.phone = updateBookingDto.phone;
     if (updateBookingDto.travelDate) data.travelDate = new Date(updateBookingDto.travelDate);
-    if (updateBookingDto.passengers) data.passengers = updateBookingDto.passengers;
+    if (updateBookingDto.passengers !== undefined && updateBookingDto.passengers !== null) {
+    data.passengers = Number(updateBookingDto.passengers);  // -> Ép sang Number
+  }
     if (updateBookingDto.status) data.status = updateBookingDto.status;
     if (updateBookingDto.tourId) {
       const tour = await this.prisma.tour.findUnique({

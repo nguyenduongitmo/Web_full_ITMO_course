@@ -18,55 +18,59 @@
                 <section class="section admin-section">
                     <div class="section__header">
                         <h1 class="section__title">Quản lý liên hệ</h1>
-                        <p class="section__subtitle">Danh sách các yêu cầu tư vấn</p>
+                        <p class="section__subtitle">Danh sách tất cả liên hệ</p>
                         <p style="margin-top: 8px; color: var(--gray-500); font-size: 14px;">
                             Tổng số: <strong><%= contacts.length %></strong> liên hệ
                         </p>
                     </div>
 
-                <% if (contacts.length > 0) { %>
-                    <div class="table-responsive">
-                        <table class="admin-table">
-                            <thead>
-                                <tr>
-                                    <th>STT</th>
-                                    <th>Khách hàng</th>
-                                    <th>Email</th>
-                                    <th>Điện thoại</th>
-                                    <th>Tin nhắn</th>
-                                    <th>Ngày</th>
-                                    <th>Thao tác</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <% contacts.forEach(function(contact, index) { %>
+                    <% if (contacts.length > 0) { %>
+                        <div class="table-responsive">
+                            <table class="admin-table">
+                                <thead>
                                     <tr>
-                                        <td><%= index + 1 %></td>
-                                        <td><strong><%= contact.name %></strong></td>
-                                        <td><%= contact.email %></td>
-                                        <td><%= contact.phone || 'N/A' %></td>
-                                        <td><%= contact.message.substring(0, 40) %><%= contact.message.length > 40 ? '...' : '' %></td>
-                                        <td><%= new Date(contact.createdAt).toLocaleDateString('vi-VN') %></td>
-                                        <td>
-                                            <a href="/admin/contacts/<%= contact.id %>" class="btn btn-view">Xem</a>
-                                        </td>
+                                        <th>STT</th>
+                                        <th>Tên</th>
+                                        <th>Email</th>
+                                        <th>SĐT</th>
+                                        <th>Chủ đề quan tâm</th>
+                                        <th>Thao tác</th>
                                     </tr>
-                                <% }); %>
-                            </tbody>
-                        </table>
-                    </div>
-                <% } else { %>
-                    <div class="empty-state">
-                        <p>Chưa có liên hệ nào</p>
-                    </div>
-                <% } %>
+                                </thead>
+                                <tbody>
+                                    <% contacts.forEach(function(contact, index) { %>
+                                        <tr>
+                                            <td><%= index + 1 %></td>
+                                            <td><strong><%= contact.fullName %></strong></td>
+                                            <td><%= contact.email %></td>
+                                            <td><%= contact.phone || '---' %></td>
+                                            <td><%= contact.interest || '' %></td>
+                                            <td>
+                                                <a href="/admin/contacts/<%= contact.id %>" class="btn btn-view">Xem</a>
+                                                <a href="/admin/contacts/<%= contact.id %>/edit" class="btn btn-edit">Sửa</a>
+                                                <form action="/admin/contacts/<%= contact.id %>" method="POST" style="display:inline;">
+                                                    <input type="hidden" name="_method" value="DELETE">
+                                                    <button type="submit" class="btn btn-delete" onclick="return confirm('Xóa liên hệ này?')">Xóa</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    <% }); %>
+                                </tbody>
+                            </table>
+                        </div>
+                    <% } else { %>
+                        <div class="empty-state">
+                            <p>Chưa có liên hệ nào</p>
+                        </div>
+                    <% } %>
+                </section>
             </div>
-            </section>
         </main>
         
         <%- include('../partials/footer') %>
     </div>
 
     <script src="/js/script.js" defer></script>
+    <script src="/js/sse-client.js" defer></script>
 </body>
 </html>

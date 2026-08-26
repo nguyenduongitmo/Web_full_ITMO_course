@@ -1,80 +1,102 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title %></title>
-    
+    <title>
+        <%= title %>
+    </title>
+
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/responsive.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
 </head>
+
 <body>
     <div class="app-wrapper">
         <%- include('../partials/header', { isLoggedIn, username, currentPath }) %>
-        
-        <main class="main">
-            <div class="container">
-                <section class="section admin-section">
-                    <div class="section__header">
-                        <h1 class="section__title">Quản lý tour</h1>
-                        <p class="section__subtitle">Danh sách tất cả tour du lịch</p>
-                        <p style="margin-top: 8px; color: var(--gray-500); font-size: 14px;">
-                            Tổng số: <strong><%= tours.length %></strong> tour
-                        </p>
-                        <div style="margin-top: 16px;">
-                            <a href="/admin/tours/create" class="btn btn-primary">+ Thêm tour mới</a>
-                        </div>
-                    </div>
 
-                <% if (tours.length > 0) { %>
-                    <div class="table-responsive">
-                        <table class="admin-table">
-                            <thead>
-                                <tr>
-                                    <th>STT</th>
-                                    <th>Tên tour</th>
-                                    <th>Mã</th>
-                                    <th>Giá</th>
-                                    <th>Thời gian</th>
-                                    <th>Nổi bật</th>
-                                    <th>Thao tác</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <% tours.forEach(function(tour, index) { %>
-                                    <tr>
-                                        <td><%= index + 1 %></td>
-                                        <td><strong><%= tour.name %></strong></td>
-                                        <td><%= tour.code %></td>
-                                        <td>$<%= tour.price %></td>
-                                        <td><%= tour.duration %></td>
-                                        <td><%= tour.isFeatured ? 'Có' : '' %></td>
-                                         <td>
-                                            <a href="/admin/tours/<%= tour.id %>/edit" class="btn btn-edit">Sửa</a>
-                                            <form action="/admin/tours/<%= tour.id %>" method="POST" style="display:inline;">
-                                                <input type="hidden" name="_method" value="DELETE">
-                                                <button type="submit" class="btn btn-delete" onclick="return confirm('Xóa tour này?')">Xóa</button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                <% }); %>
-                            </tbody>
-                        </table>
-                    </div>
-                <% } else { %>
-                    <div class="empty-state">
-                        <p>Chưa có tour nào</p>
-                    </div>
-                <% } %>
-            </div>
-            </section>
-        </main>
-        
-        <%- include('../partials/footer') %>
+            <main class="main">
+                <div class="container">
+                    <section class="section admin-section">
+                        <div class="section__header">
+                            <h1 class="section__title">Quản lý tour</h1>
+                            <p class="section__subtitle">Danh sách tất cả tour du lịch</p>
+                            <p style="margin-top: 8px; color: var(--gray-500); font-size: 14px;">
+                                Tổng số: <strong>
+                                    <%= tours.length %>
+                                </strong> tour
+                            </p>
+                            <div style="margin-top: 16px;">
+                                <a href="/admin/tours/create" class="btn btn-primary">+ Thêm tour mới</a>
+                            </div>
+                        </div>
+
+                        <% if (tours.length> 0) { %>
+                            <div class="table-responsive">
+                                <table class="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th>STT</th>
+                                            <th>Tên tour</th>
+                                            <th>Mã</th>
+                                            <th>Giá</th>
+                                            <th>Thời gian</th>
+                                            <th>Nổi bật</th>
+                                            <th>Thao tác</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% tours.forEach(function(tour, index) { %>
+                                            <tr>
+                                                <td>
+                                                    <%= index + 1 %>
+                                                </td>
+                                                <td><strong>
+                                                        <%= tour.name %>
+                                                    </strong></td>
+                                                <td>
+                                                    <%= tour.code %>
+                                                </td>
+                                                <td>$<%= tour.price %>
+                                                </td>
+                                                <td>
+                                                    <%= tour.duration %>
+                                                </td>
+                                                <td>
+                                                    <%= tour.isFeatured ? 'Có' : '' %>
+                                                </td>
+                                                <td>
+                                                    <a href="/admin/tours/<%= tour.id %>" class="btn btn-view">Xem</a>
+                                                    <a href="/admin/tours/<%= tour.id %>/edit"class="btn btn-edit">Sửa</a>
+                                                    <form action="/admin/tours/<%= tour.id %>" method="POST"
+                                                        style="display:inline;">
+                                                        <input type="hidden" name="_method" value="DELETE">
+                                                        <button type="submit" class="btn btn-delete"
+                                                            onclick="return confirm('Xóa tour này?')">Xóa</button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                            <% }); %>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <% } else { %>
+                                <div class="empty-state">
+                                    <p>Chưa có tour nào</p>
+                                </div>
+                                <% } %>
+                </div>
+                </section>
+            </main>
+
+            <%- include('../partials/footer') %>
     </div>
 
     <script src="/js/script.js" defer></script>
     <script src="/js/sse-client.js" defer></script>
 </body>
+
 </html>

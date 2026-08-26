@@ -8,17 +8,20 @@ export class ContactsService {
   constructor(private prisma: PrismaService) {}
 
   async create(createContactDto: CreateContactDto) {
-    const data = {
-      name: createContactDto.name,
+  return await this.prisma.contact.create({
+    data: {
+      fullName: createContactDto.fullName,
       email: createContactDto.email,
-      phone: createContactDto.phone || '',
-      destination: createContactDto.destination || '',
-      budget: createContactDto.budget || '',
+      phone: createContactDto.phone,
+      interest: createContactDto.interest,     
+      destination: createContactDto.destination,
+      budget: createContactDto.budget,
+      travelDate: createContactDto.travelDate, 
       message: createContactDto.message,
       subscribe: createContactDto.subscribe || false,
-    };
-    return await this.prisma.contact.create({ data });
-  }
+    },
+  });
+}
 
 async findAll() {
     return await this.prisma.contact.findMany({
@@ -38,9 +41,13 @@ async findAll() {
 
 async update(id: string, updateContactDto: UpdateContactDto) {
     const data: any = {};
-    if (updateContactDto.name) data.name = updateContactDto.name;
+    if (updateContactDto.fullName) data.fullName = updateContactDto.fullName;
     if (updateContactDto.email) data.email = updateContactDto.email;
     if (updateContactDto.phone) data.phone = updateContactDto.phone;
+     if (updateContactDto.interest) data.interest = updateContactDto.interest; 
+     if (updateContactDto.destination) data.destination = updateContactDto.destination;
+      if (updateContactDto.budget) data.budget = updateContactDto.budget;
+       if (updateContactDto.travelDate) data.travelDate = updateContactDto.travelDate;  
     if (updateContactDto.message) data.message = updateContactDto.message;
     if (updateContactDto.subscribe !== undefined) data.subscribe = updateContactDto.subscribe;
 

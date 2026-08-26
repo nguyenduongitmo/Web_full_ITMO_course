@@ -6,10 +6,11 @@ import { ToursModule } from './tours/tours.module';
 import { BookingsModule } from './bookings/bookings.module';
 import { FeedbacksModule } from './feedbacks/feedbacks.module';
 import { ContactsModule } from './contacts/contacts.module';
+import { SseModule } from './sse/sse.module';
 
 
 @Module({
-  imports: [PrismaModule, ToursModule, BookingsModule, FeedbacksModule, ContactsModule],
+  imports: [PrismaModule, ToursModule, BookingsModule, FeedbacksModule, ContactsModule,  SseModule,],
   controllers: [AppController],
   providers: [AppService],
 })

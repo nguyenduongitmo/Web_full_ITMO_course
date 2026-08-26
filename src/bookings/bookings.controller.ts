@@ -1,11 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Render, Redirect } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Render, Redirect, Sse } from '@nestjs/common';
+import { Observable, Subject } from 'rxjs';
 import { BookingsService } from './bookings.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { UpdateBookingDto } from './dto/update-booking.dto';
+import { SseService } from '../sse/sse.service';
 
 @Controller('admin/bookings')
 export class BookingsController {
-  constructor(private readonly bookingsService: BookingsService) {}
+  private bookingEvents = new Subject<any>();
+
+  constructor(
+    private readonly bookingsService: BookingsService,
+    private readonly sseService: SseService, 
+  ) { }
 
   @Get()
   @Render('pages/admin-bookings')
@@ -13,9 +20,25 @@ export class BookingsController {
     const bookings = await this.bookingsService.findAll();
     return {
       title: 'ROYAL TRAVEL - Quản lý đặt tour',
-      isLoggedIn: false,
-      username: null,
+      isLoggedIn: true,
+      username: 'Admin',
       bookings: bookings,
+      currentPath: '/admin/bookings',
+      showBanner: false,
+    };
+  }
+
+  // ===== QUAN TRỌNG: ĐẶT :id/edit TRƯỚC :id =====
+  @Get(':id/edit')
+  @Render('pages/admin-booking-edit')
+  async editPage(@Param('id') id: string) {
+    const booking = await this.bookingsService.findOne(id);
+    if (!booking) return { redirect: '/admin/bookings' };
+    return {
+      title: 'ROYAL TRAVEL - Sửa đặt tour',
+      isLoggedIn: true,
+      username: 'Admin',
+      booking: booking,
       currentPath: '/admin/bookings',
       showBanner: false,
     };
@@ -28,8 +51,8 @@ export class BookingsController {
     if (!booking) return { redirect: '/admin/bookings' };
     return {
       title: 'ROYAL TRAVEL - Chi tiết đặt tour',
-      isLoggedIn: false,
-      username: null,
+      isLoggedIn: true,
+      username: 'Admin',
       booking: booking,
       currentPath: '/admin/bookings',
       showBanner: false,
@@ -37,27 +60,55 @@ export class BookingsController {
   }
 
   @Post()
+  @Redirect('/admin/bookings')
   async create(@Body() createBookingDto: CreateBookingDto) {
     const booking = await this.bookingsService.create(createBookingDto);
-    return { url: `/admin/bookings/${booking.id}` };
+    
+    // Dùng SseService thay vì Subject riêng
+    this.sseService.emit({
+      type: 'create',
+      message: `Booking của "${booking.fullName}" đã được tạo!`,
+      module: 'bookings',
+      data: booking,
+      timestamp: new Date().toISOString(),
+    });
+    
+    await new Promise(resolve => setTimeout(resolve, 300));
+    return { url: '/admin/bookings' };
   }
 
   @Patch(':id')
+  @Redirect('/admin/bookings')
   async update(@Param('id') id: string, @Body() updateBookingDto: UpdateBookingDto) {
-    await this.bookingsService.update(id, updateBookingDto);
-    return { url: `/admin/bookings/${id}` };
-  }
-
-  @Patch(':id/status')
-  async updateStatus(@Param('id') id: string, @Body('status') status: string) {
-    await this.bookingsService.updateStatus(id, status);
-    return { url: `/admin/bookings/${id}` };
+    const booking = await this.bookingsService.update(id, updateBookingDto);
+    
+    this.sseService.emit({
+      type: 'update',
+      message: `Booking của "${booking.fullName}" đã được cập nhật!`,
+      module: 'bookings',
+      data: booking,
+      timestamp: new Date().toISOString(),
+    });
+    
+    await new Promise(resolve => setTimeout(resolve, 300));
+    return { url: '/admin/bookings' };
   }
 
   @Delete(':id')
   @Redirect('/admin/bookings')
   async remove(@Param('id') id: string) {
+    const booking = await this.bookingsService.findOne(id);
     await this.bookingsService.remove(id);
+    
+    this.sseService.emit({
+      type: 'delete',
+      message: `Booking của "${booking?.fullName || '#' + id}" đã bị xóa!`,
+      module: 'bookings',
+      data: { id, fullName: booking?.fullName },
+      timestamp: new Date().toISOString(),
+    });
+    
+    await new Promise(resolve => setTimeout(resolve, 300));
     return { url: '/admin/bookings' };
   }
 }

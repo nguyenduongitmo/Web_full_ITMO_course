@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-wrapper">
+        <%- include('../partials/header', { isLoggedIn, username, currentPath }) %>
+        
+        <main class="main">
+            <div class="container">
+                <section class="section tour-form">
+                    <div class="section__header">
+                        <h1 class="section__title">Sửa đánh giá</h1>
+                        <a href="/admin/feedbacks" class="btn btn-outline">← Quay lại danh sách</a>
+                    </div>
+                    
+                    <form action="/admin/feedbacks/<%= feedback.id %>" method="POST" style="max-width: 600px; margin: 0 auto;">
+                        <input type="hidden" name="_method" value="PATCH">
+                        
+                        <div class="form-group">
+                            <label>Tên khách hàng *</label>
+                            <input type="text" name="fullName" value="<%= feedback.fullName %>" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Email *</label>
+                            <input type="email" name="email" value="<%= feedback.email %>" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Đánh giá *</label>
+                            <div class="edit-star-rating">
+                                <input type="radio" name="rating" value="5" id="edit-star5" <%= feedback.rating === 5 ? 'checked' : '' %>>
+                                <label for="edit-star5">★</label>
+                                
+                                <input type="radio" name="rating" value="4" id="edit-star4" <%= feedback.rating === 4 ? 'checked' : '' %>>
+                                <label for="edit-star4">★</label>
+                                
+                                <input type="radio" name="rating" value="3" id="edit-star3" <%= feedback.rating === 3 ? 'checked' : '' %>>
+                                <label for="edit-star3">★</label>
+                                
+                                <input type="radio" name="rating" value="2" id="edit-star2" <%= feedback.rating === 2 ? 'checked' : '' %>>
+                                <label for="edit-star2">★</label>
+                                
+                                <input type="radio" name="rating" value="1" id="edit-star1" <%= feedback.rating === 1 ? 'checked' : '' %>>
+                                <label for="edit-star1">★</label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Nội dung</label>
+                            <textarea name="comment" rows="5"><%= feedback.comment || '' %></textarea>
+                        </div>
+                        
+                        <div class="tour-form-actions">
+                            <button type="submit" class="btn btn-primary">Cập nhật</button>
+                            <a href="/admin/feedbacks" class="btn btn-cancel">Hủy</a>
+                        </div>
+                    </form>
+                </section>
+            </div>
+        </main>
+        
+        <%- include('../partials/footer') %>
+    </div>
+
+    <script src="/js/script.js" defer></script>
+</body>
+</html>

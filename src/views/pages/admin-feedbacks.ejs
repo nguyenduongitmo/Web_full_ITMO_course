@@ -18,60 +18,66 @@
                 <section class="section admin-section">
                     <div class="section__header">
                         <h1 class="section__title">Quản lý đánh giá</h1>
-                        <p class="section__subtitle">Danh sách đánh giá từ khách hàng</p>
+                        <p class="section__subtitle">Danh sách tất cả đánh giá</p>
                         <p style="margin-top: 8px; color: var(--gray-500); font-size: 14px;">
                             Tổng số: <strong><%= feedbacks.length %></strong> đánh giá
                         </p>
                     </div>
-                
 
-                <% if (feedbacks.length > 0) { %>
-                    <div class="table-responsive">
-                        <table class="admin-table">
-                            <thead>
-                                <tr>
-                                    <th>STT</th>
-                                    <th>Khách hàng</th>
-                                    <th>Email</th>
-                                    <th>Tour</th>
-                                    <th>Đánh giá</th>
-                                    <th>Nội dung</th>
-                                    <th>Ngày</th>
-                                    <th>Thao tác</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <% feedbacks.forEach(function(feedback, index) { %>
+                    <% if (feedbacks.length > 0) { %>
+                        <div class="table-responsive">
+                            <table class="admin-table">
+                                <thead>
                                     <tr>
-                                        <td><%= index + 1 %></td>
-                                        <td><strong><%= feedback.name %></strong></td>
-                                        <td><%= feedback.email %></td>
-                                        <td><%= feedback.tour?.name || 'Không có' %></td>
-                                        <td style="color: #f59e0b; font-size: 14px; letter-spacing: 1px;">
-                                            <%= '★'.repeat(feedback.rating || 0) %><%= '☆'.repeat(5 - (feedback.rating || 0)) %>
-                                        </td>
-                                        <td><%= feedback.comment.substring(0, 30) %><%= feedback.comment.length > 30 ? '...' : '' %></td>
-                                        <td><%= new Date(feedback.createdAt).toLocaleDateString('vi-VN') %></td>
-                                        <td>
-                                            <a href="/admin/feedbacks/<%= feedback.id %>" class="btn btn-view">Xem</a>
-                                        </td>
+                                        <th>STT</th>
+                                        <th>Khách hàng</th>
+                                        <th>Email</th>
+                                        <th>Đánh giá</th>
+                                        <th>Nội dung</th>
+                                        <th>Thao tác</th>
                                     </tr>
-                                <% }); %>
-                            </tbody>
-                        </table>
-                    </div>
-                <% } else { %>
-                    <div class="empty-state">
-                        <p>Chưa có đánh giá nào</p>
-                    </div>
-                <% } %>
+                                </thead>
+                                <tbody>
+                                    <% feedbacks.forEach(function(feedback, index) { %>
+                                        <tr>
+                                            <td><%= index + 1 %></td>
+                                            <td><strong><%= feedback.fullName %></strong></td>
+                                            <td><%= feedback.email %></td>
+                                            <td>
+                                                <span style="color: #f59e0b; font-size: 16px;">
+                                                    <% for (let i = 0; i < feedback.rating; i++) { %>★<% } %>
+                                                    <% for (let i = feedback.rating; i < 5; i++) { %>☆<% } %>
+                                                </span>
+                                            </td>
+                                            <td style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                <%= feedback.comment || '' %>
+                                            </td>
+                                            <td>
+                                                <a href="/admin/feedbacks/<%= feedback.id %>" class="btn btn-view">Xem</a>
+                                                <a href="/admin/feedbacks/<%= feedback.id %>/edit" class="btn btn-edit">Sửa</a>
+                                                <form action="/admin/feedbacks/<%= feedback.id %>" method="POST" style="display:inline;">
+                                                    <input type="hidden" name="_method" value="DELETE">
+                                                    <button type="submit" class="btn btn-delete" onclick="return confirm('Xóa đánh giá này?')">Xóa</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    <% }); %>
+                                </tbody>
+                            </table>
+                        </div>
+                    <% } else { %>
+                        <div class="empty-state">
+                            <p>Chưa có đánh giá nào</p>
+                        </div>
+                    <% } %>
+                </section>
             </div>
-        </section>
         </main>
         
         <%- include('../partials/footer') %>
     </div>
 
     <script src="/js/script.js" defer></script>
+    <script src="/js/sse-client.js" defer></script>
 </body>
 </html>
