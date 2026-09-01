@@ -3,12 +3,14 @@ import { Observable, Subject } from 'rxjs';
 import { FeedbacksService } from './feedbacks.service';
 import { CreateFeedbackDto } from './dto/create-feedback.dto';
 import { UpdateFeedbackDto } from './dto/update-feedback.dto';
+import { SseService } from '../sse/sse.service';
 
 @Controller('admin/feedbacks')
 export class FeedbacksController {
-  private feedbackEvents = new Subject<any>();
-
-  constructor(private readonly feedbacksService: FeedbacksService) {}
+  constructor(
+    private readonly feedbacksService: FeedbacksService,
+    private readonly sseService: SseService,
+  ) {}
 
   @Get()
   @Render('pages/admin-feedbacks')
@@ -59,7 +61,7 @@ export class FeedbacksController {
   async create(@Body() createFeedbackDto: CreateFeedbackDto) {
     const feedback = await this.feedbacksService.create(createFeedbackDto);
     
-    this.feedbackEvents.next({
+    this.sseService.emit({
       type: 'create',
       message: `Đánh giá của "${feedback.fullName}" đã được tạo!`,
       module: 'feedbacks',
@@ -76,7 +78,7 @@ export class FeedbacksController {
   async update(@Param('id') id: string, @Body() updateFeedbackDto: UpdateFeedbackDto) {
     const feedback = await this.feedbacksService.update(id, updateFeedbackDto);
     
-    this.feedbackEvents.next({
+    this.sseService.emit({
       type: 'update',
       message: `Đánh giá của "${feedback.fullName}" đã được cập nhật!`,
       module: 'feedbacks',
@@ -94,7 +96,7 @@ export class FeedbacksController {
     const feedback = await this.feedbacksService.findOne(id);
     await this.feedbacksService.remove(id);
     
-    this.feedbackEvents.next({
+    this.sseService.emit({
       type: 'delete',
       message: `Đánh giá của "${feedback?.fullName || '#' + id}" đã bị xóa!`,
       module: 'feedbacks',
@@ -105,25 +107,4 @@ export class FeedbacksController {
     await new Promise(resolve => setTimeout(resolve, 300));
     return { url: '/admin/feedbacks' };
   }
-
-  @Sse('events')
-sse(): Observable<any> {
-  console.log('Feedbacks SSE connected!');
-  return new Observable((observer) => {
-    const subscription = this.feedbackEvents.subscribe({
-      next: (data) => {
-        observer.next({
-          data: JSON.stringify(data),
-          type: data.type,
-        });
-      },
-      error: (err) => observer.error(err),
-      complete: () => observer.complete(),
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  });
-}
 }

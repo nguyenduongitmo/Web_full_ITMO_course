@@ -1,5 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Render, Query, Redirect, Sse } from '@nestjs/common';
-import { Observable, Subject } from 'rxjs';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Render, Redirect, Sse } from '@nestjs/common';
 import { ToursService } from './tours.service';
 import { CreateTourDto } from './dto/create-tour.dto';
 import { UpdateTourDto } from './dto/update-tour.dto';
@@ -7,8 +6,9 @@ import { SseService } from '../sse/sse.service';
 
 @Controller('admin/tours')
 export class ToursController {
-  constructor(private readonly toursService: ToursService,
-    private readonly sseService: SseService, //  Inject SseService
+  constructor(
+    private readonly toursService: ToursService,
+    private readonly sseService: SseService,
   ) {}
 
   @Get('create')
@@ -22,21 +22,6 @@ export class ToursController {
       showBanner: false,
     };
   }
-
-@Get(':id')
-@Render('pages/admin-tour-detail')
-async findOne(@Param('id') id: string) {
-  const tour = await this.toursService.findOne(id);
-  if (!tour) return { redirect: '/admin/tours' };
-  return {
-    title: 'ROYAL TRAVEL - Chi tiết tour',
-    isLoggedIn: true,
-    username: 'Admin',
-    tour: tour,
-    currentPath: '/admin/tours',
-    showBanner: false,
-  };
-}
 
   @Get(':id/edit')
   @Render('pages/admin-tour-edit')
@@ -67,6 +52,21 @@ async findOne(@Param('id') id: string) {
     };
   }
 
+  @Get(':id')
+  @Render('pages/admin-tour-detail')
+  async findOne(@Param('id') id: string) {
+    const tour = await this.toursService.findOne(id);
+    if (!tour) return { redirect: '/admin/tours' };
+    return {
+      title: 'ROYAL TRAVEL - Chi tiết tour',
+      isLoggedIn: true,
+      username: 'Admin',
+      tour: tour,
+      currentPath: '/admin/tours',
+      showBanner: false,
+    };
+  }
+
   @Post()
   @Redirect('/admin/tours')
   async create(@Body() createTourDto: CreateTourDto) {
@@ -79,7 +79,7 @@ async findOne(@Param('id') id: string) {
       module: 'tours',
       data: tour,
       timestamp: new Date().toISOString(),
-    }as any);
+    });
     
     await new Promise(resolve => setTimeout(resolve, 300));
     return { url: '/admin/tours' };
@@ -96,7 +96,7 @@ async findOne(@Param('id') id: string) {
       module: 'tours',
       data: tour,
       timestamp: new Date().toISOString(),
-    }as any);
+    });
     
     await new Promise(resolve => setTimeout(resolve, 300));
     return { url: '/admin/tours' };
@@ -114,7 +114,7 @@ async findOne(@Param('id') id: string) {
       module: 'tours',
       data: { id, name: tour?.name },
       timestamp: new Date().toISOString(),
-    }as any);  ;
+    });
     
     await new Promise(resolve => setTimeout(resolve, 300));
     return { url: '/admin/tours' };

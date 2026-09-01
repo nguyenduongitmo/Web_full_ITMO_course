@@ -3,11 +3,7 @@
 
     console.log('SSE Client starting...');
 
-    //  TẠO KẾT NỐI CHO TỪNG MODULE 
-    const tourEventSource = new EventSource('/admin/tours/events');
-    const bookingEventSource = new EventSource('/admin/bookings/events');
-    const feedbackEventSource = new EventSource('/admin/feedbacks/events');
-    const contactEventSource = new EventSource('/admin/contacts/events');
+    const eventSource = new EventSource('/api/events');
 
     let lastMessage = '';
     let lastMessageTime = 0;
@@ -32,54 +28,13 @@
         }
     }
 
-    //  ĐĂNG KÝ LẮNG NGHE CHO TỪNG MODULE 
-    // Tours
-    tourEventSource.addEventListener('create', handleEvent);
-    tourEventSource.addEventListener('update', handleEvent);
-    tourEventSource.addEventListener('delete', handleEvent);
-
-    // Bookings
-    bookingEventSource.addEventListener('create', handleEvent);
-    bookingEventSource.addEventListener('update', handleEvent);
-    bookingEventSource.addEventListener('delete', handleEvent);
-
-    // Feedbacks
-    feedbackEventSource.addEventListener('create', handleEvent);
-    feedbackEventSource.addEventListener('update', handleEvent);
-    feedbackEventSource.addEventListener('delete', handleEvent);
-
-    // Contacts
-    contactEventSource.addEventListener('create', handleEvent);
-    contactEventSource.addEventListener('update', handleEvent);
-    contactEventSource.addEventListener('delete', handleEvent);
-
-    //  KIỂM TRA KẾT NỐI 
-    tourEventSource.onopen = function() {
-        console.log('Tours SSE connected!');
-    };
-    bookingEventSource.onopen = function() {
-        console.log('Bookings SSE connected!');
-    };
-    feedbackEventSource.onopen = function() {
-        console.log('Feedbacks SSE connected!');
-    };
-    contactEventSource.onopen = function() {
-        console.log('Contacts SSE connected!');
-    };
-
-    //  XỬ LÝ LỖI 
-    tourEventSource.onerror = function(error) {
-        console.error('Tours SSE error:', error);
-    };
-    bookingEventSource.onerror = function(error) {
-        console.error('Bookings SSE error:', error);
-    };
-    feedbackEventSource.onerror = function(error) {
-        console.error('Feedbacks SSE error:', error);
-    };
-    contactEventSource.onerror = function(error) {
-        console.error('Contacts SSE error:', error);
-    };
+    //  ĐĂNG KÝ LẮNG NGHE
+    eventSource.addEventListener('create', handleEvent);
+    eventSource.addEventListener('update', handleEvent);
+    eventSource.addEventListener('delete', handleEvent);
+    
+    //  XỬ LÝ LỖI
+    eventSource.onerror = function() {};
 
     //  HÀM HIỂN THỊ NOTIFICATION 
     function showNotification(message) {

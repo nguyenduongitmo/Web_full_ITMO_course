@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Render, Redirect, Sse } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Render, Redirect } from '@nestjs/common';
 import { Observable, Subject } from 'rxjs';
 import { BookingsService } from './bookings.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
@@ -7,8 +7,6 @@ import { SseService } from '../sse/sse.service';
 
 @Controller('admin/bookings')
 export class BookingsController {
-  private bookingEvents = new Subject<any>();
-
   constructor(
     private readonly bookingsService: BookingsService,
     private readonly sseService: SseService, 

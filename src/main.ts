@@ -13,6 +13,7 @@ async function bootstrap() {
   app.use(express.json());
   // express.urlencoded() để parse form data từ HTML
   app.use(express.urlencoded({ extended: true }));
+
   app.use((req: any, res: any, next: any) => {
     if (req.method === 'POST' && req.body && req.body._method) {
       const newMethod = req.body._method.toUpperCase();
@@ -22,11 +23,9 @@ async function bootstrap() {
     next();
   });
   
-
-  
   // Static files: public/
   app.useStaticAssets(join(projectRoot, 'public'));
-  
+
   // Views: src/views/
   app.setBaseViewsDir(join(projectRoot, 'src', 'views'));
   app.setViewEngine('ejs');

@@ -15,64 +15,56 @@
     <div class="app-wrapper">
         <%- include('../partials/header', { isLoggedIn, username, currentPath }) %>
 
-            <main class="main">
-                <div class="container">
-                    <section class="section">
-                        <div class="section__header">
-                            <h1 class="section__title">Chi tiết liên hệ</h1>
-                            <a href="/admin/contacts" class="btn btn-outline">← Quay lại danh sách</a>
+        <main class="main">
+            <div class="container">
+                <section class="section">
+                    <div class="section__header">
+                        <h1 class="section__title">Chi tiết liên hệ</h1>
+                        <a href="/admin/contacts" class="btn btn-outline">← Quay lại danh sách</a>
+                    </div>
+
+                    <div style="max-width: 700px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <div><strong>Tên:</strong></div>
+                            <div><%= contact.fullName %></div>
+
+                            <div><strong>Email:</strong></div>
+                            <div><%= contact.email %></div>
+
+                            <div><strong>Số điện thoại:</strong></div>
+                            <div><%= contact.phone || '---' %></div>
+
+                            <div><strong>Chủ đề quan tâm:</strong></div>
+                            <div><%= contact.interest || 'Không có' %></div>
+
+                            <div><strong>Ngân sách:</strong></div>
+                            <div><%= contact.budget || 'Không có' %></div>
+
+                            <div><strong>Nội dung:</strong></div>
+                            <div style="grid-column: span 2;"><%= contact.message %></div>
+
+                            <div><strong>Ngày gửi:</strong></div>
+                            <div><%= new Date(contact.createdAt).toLocaleDateString('vi-VN') %></div>
                         </div>
 
-                        <div
-                            style="max-width: 700px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                                <div><strong>Tên:</strong></div>
-                                <div>
-                                    <%= contact.fullName %>
-                                </div>
-
-                                <div><strong>Email:</strong></div>
-                                <div>
-                                    <%= contact.email %>
-                                </div>
-
-                                <div><strong>Số điện thoại:</strong></div>
-                                <div>
-                                    <%= contact.phone || '---' %>
-                                </div>
-
-                                <div><strong>Chủ đề quan tâm:</strong></div>
-                                <div>
-                                    <%= contact.interest || 'Không có' %>
-                                </div>
-
-                                <div><strong>Nội dung:</strong></div>
-                                <div>
-                                    <%= contact.message %>
-                                </div>
-                                <div><strong>Ngân sách:</strong></div>
-                                <div>
-                                    <%= contact.budget || 'Không có' %>
-                                </div>
-
-
-                                <div
-                                    style="display: flex; gap: 12px; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--gray-300);">
-                                    <a href="/admin/contacts/<%= contact.id %>/edit" class="btn btn-primary"
-                                        style="flex:1;">Sửa</a>
-                                    <form action="/admin/contacts/<%= contact.id %>" method="POST" style="flex:1;">
-                                        <input type="hidden" name="_method" value="DELETE">
-                                        <button type="submit" class="btn btn-delete" style="width:100%;"
-                                            onclick="return confirm('Xóa liên hệ này?')">Xóa</button>
-                                    </form>
-                                </div>
-                            </div>
-                    </section>
-                </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--gray-300);">
+                            <a href="/admin/contacts/<%= contact.id %>/edit" class="btn btn-primary" style="text-align: center;">Sửa</a>
+                            <form action="/admin/contacts/<%= contact.id %>" method="POST">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <button type="submit" class="btn btn-delete" style="width:100%;" onclick="return confirm('Xóa liên hệ này?')">Xóa</button>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+            </div>
         </main>
-            <%- include('../partials/footer') %>
+
+        <%- include('../partials/footer') %>
     </div>
 
     <script src="/js/script.js" defer></script>
+    <script src="/js/sse-client.js" defer></script>
 </body>
+
 </html>

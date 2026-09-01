@@ -14,7 +14,6 @@ export class SseService {
   private events = new Subject<SseEvent>();
 
   emit(event: SseEvent) {
-    console.log(`SSE [${event.module}] ${event.type}: ${event.message}`);
     this.events.next(event);
   }
 

@@ -7,8 +7,6 @@ import { SseService } from '../sse/sse.service';
 
 @Controller('admin/contacts')
 export class ContactsController {
-  private contactEvents = new Subject<any>();
-
   constructor(
     private readonly contactsService: ContactsService,
     private readonly sseService: SseService,
