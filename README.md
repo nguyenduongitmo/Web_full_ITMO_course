@@ -78,6 +78,42 @@ https://web-full-itmo-course.onrender.com
 ![ER Diagram](./er-diagram.png)
 
 ---
+## Features (Lab 3)
+
+### 1. MVC Architecture with DDD
+
+The application follows Domain-Driven Design principles with clear separation of concerns:
+src/
+├── tours/ # Tour module (CRUD + SSE)
+├── bookings/ # Booking module (CRUD + SSE)
+├── feedbacks/ # Feedback module (CRUD + SSE)
+├── contacts/ # Contact module (CRUD + SSE)
+├── sse/ # Centralized SSE infrastructure
+├── prisma/ # Database service
+└── views/ # EJS templates
+├── pages/ # Page templates
+└── partials/ # Reusable components
+
+### 2. Full CRUD Operations
+
+All modules support complete CRUD operations: Tours, Bookings, Feedbacks, Contacts
+
+### 3. Server-Sent Events (SSE) - Real-time Notifications
+
+**Server-side:**
+- Centralized `SseService` for event management
+- Single SSE endpoint: `/api/events`
+- Real-time events for Create, Update, Delete operations
+- Event types: `create`, `update`, `delete`
+- Event modules: `tours`, `bookings`, `feedbacks`, `contacts`
+
+**Client-side:**
+- `EventSource` API integration
+- Auto-reconnection on connection loss
+- Toast notifications with smooth animations
+
+**SSE Flow:**
+User Action -> Controller -> SseService.emit() -> /api/events -> Client -> Toast Notification
 
 ## Migration and Seeding
 
