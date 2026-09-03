@@ -12,28 +12,14 @@ export class BookingsController {
     private readonly sseService: SseService, 
   ) { }
 
-  @Get()
-  @Render('pages/admin-bookings')
-  async findAll() {
-    const bookings = await this.bookingsService.findAll();
-    return {
-      title: 'ROYAL TRAVEL - Quản lý đặt tour',
-      isLoggedIn: true,
-      username: 'Admin',
-      bookings: bookings,
-      currentPath: '/admin/bookings',
-      showBanner: false,
-    };
-  }
-
-  // ===== QUAN TRỌNG: ĐẶT :id/edit TRƯỚC :id =====
+  // - QUAN TRỌNG: ĐẶT :id/edit TRƯỚC :id -
   @Get(':id/edit')
-  @Render('pages/admin-booking-edit')
+  @Render('admin/bookings/edit')
   async editPage(@Param('id') id: string) {
     const booking = await this.bookingsService.findOne(id);
     if (!booking) return { redirect: '/admin/bookings' };
     return {
-      title: 'ROYAL TRAVEL - Sửa đặt tour',
+      title: 'Sửa đặt tour',
       isLoggedIn: true,
       username: 'Admin',
       booking: booking,
@@ -43,15 +29,29 @@ export class BookingsController {
   }
 
   @Get(':id')
-  @Render('pages/admin-booking-detail')
+  @Render('admin/bookings/detail')
   async findOne(@Param('id') id: string) {
     const booking = await this.bookingsService.findOne(id);
     if (!booking) return { redirect: '/admin/bookings' };
     return {
-      title: 'ROYAL TRAVEL - Chi tiết đặt tour',
+      title: 'Chi tiết đặt tour',
       isLoggedIn: true,
       username: 'Admin',
       booking: booking,
+      currentPath: '/admin/bookings',
+      showBanner: false,
+    };
+  }
+
+  @Get()
+  @Render('admin/bookings/index')
+  async findAll() {
+    const bookings = await this.bookingsService.findAll();
+    return {
+      title: 'Quản lý đặt tour',
+      isLoggedIn: true,
+      username: 'Admin',
+      bookings: bookings,
       currentPath: '/admin/bookings',
       showBanner: false,
     };

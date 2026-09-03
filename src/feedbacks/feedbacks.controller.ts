@@ -12,27 +12,13 @@ export class FeedbacksController {
     private readonly sseService: SseService,
   ) {}
 
-  @Get()
-  @Render('pages/admin-feedbacks')
-  async findAll() {
-    const feedbacks = await this.feedbacksService.findAll();
-    return {
-      title: 'ROYAL TRAVEL - Quản lý đánh giá',
-      isLoggedIn: true,
-      username: 'Admin',
-      feedbacks: feedbacks,
-      currentPath: '/admin/feedbacks',
-      showBanner: false,
-    };
-  }
-
   @Get(':id/edit')
-  @Render('pages/admin-feedback-edit')
+  @Render('admin/feedbacks/edit')
   async editPage(@Param('id') id: string) {
     const feedback = await this.feedbacksService.findOne(id);
     if (!feedback) return { redirect: '/admin/feedbacks' };
     return {
-      title: 'ROYAL TRAVEL - Sửa đánh giá',
+      title: 'Sửa đánh giá',
       isLoggedIn: true,
       username: 'Admin',
       feedback: feedback,
@@ -42,15 +28,29 @@ export class FeedbacksController {
   }
 
   @Get(':id')
-  @Render('pages/admin-feedback-detail')
+  @Render('admin/feedbacks/detail')
   async findOne(@Param('id') id: string) {
     const feedback = await this.feedbacksService.findOne(id);
     if (!feedback) return { redirect: '/admin/feedbacks' };
     return {
-      title: 'ROYAL TRAVEL - Chi tiết đánh giá',
+      title: 'Chi tiết đánh giá',
       isLoggedIn: true,
       username: 'Admin',
       feedback: feedback,
+      currentPath: '/admin/feedbacks',
+      showBanner: false,
+    };
+  }
+
+  @Get()
+  @Render('admin/feedbacks/index')
+  async findAll() {
+    const feedbacks = await this.feedbacksService.findAll();
+    return {
+      title: 'Quản lý đánh giá',
+      isLoggedIn: true,
+      username: 'Admin',
+      feedbacks: feedbacks,
       currentPath: '/admin/feedbacks',
       showBanner: false,
     };

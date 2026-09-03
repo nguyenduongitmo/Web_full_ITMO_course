@@ -7,7 +7,7 @@ export class AppController {
 
   // Trang chủ
   @Get()
-  @Render('pages/index')
+  @Render('user/index')
   async getHomePage() {
     const data = await this.appService.getHomePageData();
     return {
@@ -21,7 +21,7 @@ export class AppController {
   // Trang tour
 
   @Get('tours/:id')
-  @Render('pages/tour-detail')
+  @Render('user/tour-detail')
   async getTourDetail(@Param('id') id: string) {
     const tour = await this.appService.getTourDetail(id);
     if (!tour) return { redirect: '/tours' };
@@ -37,7 +37,7 @@ export class AppController {
   }
   
   @Get('tours')
-  @Render('pages/tours')
+  @Render('user/tours')
   async getToursPage() {
     const data = await this.appService.getToursPageData();
     return {
@@ -52,7 +52,7 @@ export class AppController {
 
   // Trang liên hệ
   @Get('contact')
-  @Render('pages/contact')
+  @Render('user/contact')
   async getContactPage() {
     const data = await this.appService.getContactPageData();
     return {

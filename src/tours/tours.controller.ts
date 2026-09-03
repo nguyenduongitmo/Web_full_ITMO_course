@@ -12,10 +12,10 @@ export class ToursController {
   ) {}
 
   @Get('create')
-  @Render('pages/admin-tour-create')
+  @Render('admin/tours/create')
   createPage() {
     return {
-      title: 'ROYAL TRAVEL - Tạo tour mới',
+      title: 'Tạo tour mới',
       isLoggedIn: true,
       username: 'Admin',
       currentPath: '/admin/tours',
@@ -24,12 +24,27 @@ export class ToursController {
   }
 
   @Get(':id/edit')
-  @Render('pages/admin-tour-edit')
+  @Render('admin/tours/edit')
   async editPage(@Param('id') id: string) {
     const tour = await this.toursService.findOne(id);
     if (!tour) return { redirect: '/admin/tours' };
     return {
-      title: 'ROYAL TRAVEL - Sửa tour',
+      title: 'Sửa tour',
+      isLoggedIn: true,
+      username: 'Admin',
+      tour: tour,
+      currentPath: '/admin/tours',
+      showBanner: false,
+    };
+  }
+
+  @Get(':id')
+  @Render('admin/tours/detail')
+  async findOne(@Param('id') id: string) {
+    const tour = await this.toursService.findOne(id);
+    if (!tour) return { redirect: '/admin/tours' };
+    return {
+      title: 'Chi tiết tour',
       isLoggedIn: true,
       username: 'Admin',
       tour: tour,
@@ -39,29 +54,14 @@ export class ToursController {
   }
 
   @Get()
-  @Render('pages/admin-tours')
+  @Render('admin/tours/index')
   async findAll() {
     const tours = await this.toursService.findAll();
     return {
-      title: 'ROYAL TRAVEL - Quản lý tour',
+      title: 'Quản lý tour',
       isLoggedIn: true,
       username: 'Admin',
       tours: tours,
-      currentPath: '/admin/tours',
-      showBanner: false,
-    };
-  }
-
-  @Get(':id')
-  @Render('pages/admin-tour-detail')
-  async findOne(@Param('id') id: string) {
-    const tour = await this.toursService.findOne(id);
-    if (!tour) return { redirect: '/admin/tours' };
-    return {
-      title: 'ROYAL TRAVEL - Chi tiết tour',
-      isLoggedIn: true,
-      username: 'Admin',
-      tour: tour,
       currentPath: '/admin/tours',
       showBanner: false,
     };

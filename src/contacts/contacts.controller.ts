@@ -12,27 +12,13 @@ export class ContactsController {
     private readonly sseService: SseService,
   ) {}
 
-  @Get()
-  @Render('pages/admin-contacts')
-  async findAll() {
-    const contacts = await this.contactsService.findAll();
-    return {
-      title: 'ROYAL TRAVEL - Quản lý liên hệ',
-      isLoggedIn: true,
-      username: 'Admin',
-      contacts: contacts,
-      currentPath: '/admin/contacts',
-      showBanner: false,
-    };
-  }
-
   @Get(':id/edit')
-  @Render('pages/admin-contact-edit')
+  @Render('admin/contacts/edit')
   async editPage(@Param('id') id: string) {
     const contact = await this.contactsService.findOne(id);
     if (!contact) return { redirect: '/admin/contacts' };
     return {
-      title: 'ROYAL TRAVEL - Sửa liên hệ',
+      title: 'Sửa liên hệ',
       isLoggedIn: true,
       username: 'Admin',
       contact: contact,
@@ -42,15 +28,29 @@ export class ContactsController {
   }
 
   @Get(':id')
-  @Render('pages/admin-contact-detail')
+  @Render('admin/contacts/detail')
   async findOne(@Param('id') id: string) {
     const contact = await this.contactsService.findOne(id);
     if (!contact) return { redirect: '/admin/contacts' };
     return {
-      title: 'ROYAL TRAVEL - Chi tiết liên hệ',
+      title: 'Chi tiết liên hệ',
       isLoggedIn: true,
       username: 'Admin',
       contact: contact,
+      currentPath: '/admin/contacts',
+      showBanner: false,
+    };
+  }
+
+  @Get()
+  @Render('admin/contacts/index')
+  async findAll() {
+    const contacts = await this.contactsService.findAll();
+    return {
+      title: 'Quản lý liên hệ',
+      isLoggedIn: true,
+      username: 'Admin',
+      contacts: contacts,
       currentPath: '/admin/contacts',
       showBanner: false,
     };
