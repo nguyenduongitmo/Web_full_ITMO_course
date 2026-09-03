@@ -83,16 +83,17 @@ https://web-full-itmo-course.onrender.com
 ### 1. MVC Architecture with DDD
 
 The application follows Domain-Driven Design principles with clear separation of concerns:
+
 src/
-├── tours/ # Tour module (CRUD + SSE)
-├── bookings/ # Booking module (CRUD + SSE)
-├── feedbacks/ # Feedback module (CRUD + SSE)
-├── contacts/ # Contact module (CRUD + SSE)
-├── sse/ # Centralized SSE infrastructure
-├── prisma/ # Database service
-└── views/ # EJS templates
-├── pages/ # Page templates
-└── partials/ # Reusable components
+- tours/ # Tour module (CRUD + SSE)
+- bookings/ # Booking module (CRUD + SSE)
+- feedbacks/ # Feedback module (CRUD + SSE)
+- contacts/ # Contact module (CRUD + SSE)
+- sse/ # Centralized SSE infrastructure
+- prisma/ # Database service
+    views/ # EJS templates
+- pages/ # Page templates
+    partials/ # Reusable components
 
 ### 2. Full CRUD Operations
 
