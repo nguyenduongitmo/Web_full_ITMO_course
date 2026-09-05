@@ -51,6 +51,8 @@ export class FeedbacksService {
   }
 
   async update(id: string, updateFeedbackDto: UpdateFeedbackDto) {
+    // Thêm: ktra feedback tồn tại
+    await this.findOne(id);
     const data: any = {};
     if (updateFeedbackDto.fullName) data.fullName = updateFeedbackDto.fullName;
     if (updateFeedbackDto.email) data.email = updateFeedbackDto.email;
@@ -66,6 +68,8 @@ export class FeedbacksService {
   }
 
   async remove(id: string) {
+    // Thêm: ktra feedback tồn tại
+    await this.findOne(id);
     const feedback = await this.prisma.feedback.findUnique({
       where: { id },
     });

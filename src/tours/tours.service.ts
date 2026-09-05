@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ConflictException, NotFoundException} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateTourDto } from './dto/create-tour.dto';
 import { UpdateTourDto } from './dto/update-tour.dto';
@@ -42,7 +42,7 @@ export class ToursService {
         where: { code },
       });
       if (existing) {
-        throw new Error(`Mã tour "${code}" đã tồn tại! Vui lòng chọn mã khác hoặc để trống để tự động tạo.`);
+        throw new ConflictException(`Mã tour "${code}" đã tồn tại! Vui lòng chọn mã khác hoặc để trống để tự động tạo.`);
       }
     }
 
@@ -65,9 +65,11 @@ export class ToursService {
   
   if (searchQuery) {
     where.OR = [
-      { name: { contains: searchQuery } },
-      { description: { contains: searchQuery } },
+      { name: { contains: searchQuery, mode: 'insensitive' } },        // Tìm theo tên
+      { description: { contains: searchQuery, mode: 'insensitive' } },  // Tìm theo mô tả
+      { code: { contains: searchQuery, mode: 'insensitive' } },         // Tìm theo mã tour
     ];
+    // chế độ mốt tìm kiếm không phân biệt hoa thường
   }
   
   return await this.prisma.tour.findMany({
@@ -78,14 +80,20 @@ export class ToursService {
 
   async findOne(id: string) {
     // findUnique = tìm theo id duy nhất, lấy 1 tour theo id
-    return await this.prisma.tour.findUnique({
+    const tour = await this.prisma.tour.findUnique({
       where: {id},
     }) ;
+    if (!tour) {
+      throw new NotFoundException(`Tour with ID ${id} not found`);
+    }
+    return tour;
   }
 
   async update(id: string, updateTourDto: UpdateTourDto) {
     // update = cập nhật record có id
     // Chỉ cập nhật các field được gửi lên
+    // Thêm: Kiểm tra tour tồn tại
+    await this.findOne(id);
     const data: any = {};
     if (updateTourDto.name) data.name = updateTourDto.name;
     if (updateTourDto.image) data.image = updateTourDto.image;
@@ -96,7 +104,7 @@ export class ToursService {
         where: { code: updateTourDto.code },
       });
       if (existing && existing.id !== id) {
-        throw new Error(`Mã tour "${updateTourDto.code}" đã được sử dụng bởi tour khác!`);
+        throw new ConflictException(`Mã tour "${updateTourDto.code}" đã được sử dụng bởi tour khác!`);
       }
       data.code = updateTourDto.code;
     }
@@ -118,6 +126,9 @@ export class ToursService {
 
   async remove(id: string) {
     // detele = xóa record có id
+    // Thêm: Kiểm tra tour tồn tại
+    await this.findOne(id);
+    
     return await this.prisma.tour.delete({
       where: {id},
     });

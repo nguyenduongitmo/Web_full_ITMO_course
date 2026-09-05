@@ -81,6 +81,9 @@ export class BookingsService {
   }
 
   async update(id: string, updateBookingDto: UpdateBookingDto) {
+    // Thêm: ktra booking tồn tại
+    await this.findOne(id);
+
     const data: any = {};
     if (updateBookingDto.fullName) data.fullName = updateBookingDto.fullName;
     if (updateBookingDto.email) data.email = updateBookingDto.email;
@@ -107,6 +110,8 @@ export class BookingsService {
   }
 
   async remove(id: string) {
+    // Thêm: ktra booking tồn tại
+    await this.findOne(id);
     const booking = await this.prisma.booking.findUnique({
       where: { id },
     });

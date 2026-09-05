@@ -40,6 +40,8 @@ async findAll() {
   }
 
 async update(id: string, updateContactDto: UpdateContactDto) {
+  // Thêm: ktra contact tồn tại
+    await this.findOne(id);
     const data: any = {};
     if (updateContactDto.fullName) data.fullName = updateContactDto.fullName;
     if (updateContactDto.email) data.email = updateContactDto.email;
@@ -58,6 +60,8 @@ async update(id: string, updateContactDto: UpdateContactDto) {
   }
     
   async remove(id: string) {
+    // Thêm: ktra contact tồn tại
+    await this.findOne(id);
     const contact = await this.prisma.contact.findUnique({
       where: { id },
     });
