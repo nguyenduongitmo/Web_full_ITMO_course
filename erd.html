@@ -1,0 +1,77 @@
+
+    <!DOCTYPE html>
+    <div class="mermaid">
+      erDiagram
+User {
+	String id
+	String email
+	String fullName
+	String password
+	String role
+	Feedback feedbacks
+	Booking bookings
+	DateTime createdAt
+	DateTime updatedAt
+}
+Tour {
+	String id
+	String name
+	String image
+	String description
+	String code
+	Float price
+	String duration
+	Boolean isFeatured
+	Feedback feedbacks
+	Booking bookings
+	DateTime createdAt
+	DateTime updatedAt
+}
+Feedback {
+	String id
+	String fullName
+	String email
+	String comment
+	Int rating
+	String tourId
+	String userId
+	DateTime createdAt
+}
+Feedback }o--o| Tour : tour
+Feedback }o--o| User : user
+Booking {
+	String id
+	String bookingCode
+	String userId
+	String tourId
+	String fullName
+	String email
+	String phone
+	DateTime travelDate
+	Int passengers
+	String status
+	DateTime createdAt
+	DateTime updatedAt
+}
+Booking }o--|| User : user
+Booking }o--|| Tour : tour
+Contact {
+	String id
+	String fullName
+	String email
+	String phone
+	String interest
+	String destination
+	String budget
+	String travelDate
+	String message
+	Boolean subscribe
+	DateTime createdAt
+}
+
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>
+      mermaid.initialize({ startOnLoad: true });
+    </script>
+  

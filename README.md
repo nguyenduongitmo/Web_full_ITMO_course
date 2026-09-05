@@ -37,6 +37,11 @@ https://web-full-itmo-course.onrender.com
 - PostgreSQL - Relational database (Render PostgreSQL)
 - EJS - Template engine
 
+### API & Documentation
+- **Swagger/OpenAPI** - RESTful API documentation
+- **class-validator** - Data validation
+- **class-transformer** - Data transformation
+
 ### Frontend (from previous semester)
 - HTML5 - Semantic markup
 - CSS3 - Custom styling with Flexbox and Grid
@@ -60,11 +65,11 @@ https://web-full-itmo-course.onrender.com
 
 | Entity | Description | Key Fields |
 |--------|-------------|------------|
-| User | System users | id, email, name, role |
-| Tour | Travel packages | id, name, image, description, code, price, duration |
-| Feedback | Customer reviews | id, name, email, comment, tourId, userId |
-| Booking | Tour reservations | id, userId, tourId, travelDate, passengers, status |
-| Contact | Customer inquiries | id, name, email, phone, message, subscribe |
+| **User** | System users | id, email, fullName, role |
+| **Tour** | Travel packages | id, name, image, description, code, price, duration, isFeatured |
+| **Feedback** | Customer reviews | id, fullName, email, rating, comment, tourId, userId |
+| **Booking** | Tour reservations | id, bookingCode, userId, tourId, travelDate, passengers, status |
+| **Contact** | Customer inquiries | id, fullName, email, phone, message, subscribe |
 
 ### Relationships
 
@@ -75,7 +80,7 @@ https://web-full-itmo-course.onrender.com
 
 ### ER Diagram
 
-![ER Diagram](./er-diagram.png)
+![ER Diagram](./erd.jpg)
 
 ---
 ## Features (Lab 3)
@@ -115,6 +120,68 @@ All modules support complete CRUD operations: Tours, Bookings, Feedbacks, Contac
 
 **SSE Flow:**
 User Action -> Controller -> SseService.emit() -> /api/events -> Client -> Toast Notification
+
+---
+
+## Lab 4: RESTful API + Swagger (Completed)
+
+### 1. RESTful API Architecture
+
+- **Separate API Controllers** with `/api` prefix, independent from MVC
+- **Global Exception Filter** for consistent error responses
+- **Validation** with `class-validator` decorators
+- **Pagination** with `page` & `limit` query params
+- **HATEOAS** with `Link` header for navigation
+
+### 2. Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| **Tours** |
+| GET | `/api/tours` | List tours (paginated) |
+| GET | `/api/tours/:id` | Get tour by ID |
+| POST | `/api/tours` | Create tour |
+| PATCH | `/api/tours/:id` | Update tour |
+| DELETE | `/api/tours/:id` | Delete tour |
+| **Bookings / Feedbacks / Contacts** | Same CRUD pattern |
+
+### 3. Pagination Example
+GET /api/tours?page=2&limit=5
+
+
+**Response:**
+```
+{
+  "data": [...],
+  "meta": {
+    "total": 50,
+    "page": 2,
+    "limit": 5,
+    "totalPages": 10,
+    "hasNext": true,
+    "hasPrev": true
+  },
+  "links": {
+    "first": "/api/tours?page=1&limit=5",
+    "prev": "/api/tours?page=1&limit=5",
+    "next": "/api/tours?page=3&limit=5",
+    "last": "/api/tours?page=10&limit=5"
+  }
+}
+```
+
+### 4. API Documentation
+ Swagger UI: https://web-full-itmo-course.onrender.com/api-docs
+
+### 5. Error Responses
+|Status |	Description|
+|--------|----------|
+|400    | Validation failed
+|404	|Resource not found
+|409	|Duplicate entry
+|500	|Internal server error
+
+---
 
 ## Migration and Seeding
 
@@ -214,8 +281,8 @@ npm run start:prod
 |-------|-----------|-----------|-------|
 |Lab 1	|Deploy on Render and Templating|	10|	Completed
 |Lab 2	|Domain Model and Database	|12	|Completed
-|Lab 3	|CRUD + SSE	| 12|	Pending
-|Lab 4	|RESTful API + Swagger|	12|	Pending
+|Lab 3	|CRUD + SSE	| 12|	Completed
+|Lab 4	|RESTful API + Swagger|	12|	Completed
 |Lab 5	|GraphQL	|12|	Pending
 |Lab 6	|BFF + Caching	|10|	Pending
 |Lab 7	|Authentication	|12|	Pending
