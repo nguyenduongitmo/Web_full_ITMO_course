@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ROYAL TRAVEL - <%= title %></title>
-    
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/responsive.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
+
 <body>
     <div class="app-wrapper">
         <%- include('../../partials/header', { isLoggedIn, username, currentPath }) %>
@@ -18,32 +18,44 @@
                 <section class="section tour-form">
                     <div class="section__header">
                         <h1 class="section__title">Chỉnh sửa tour</h1>
-                        <a href="admin/tours/<%= tour.id %>" class="btn btn-outline">← Quay lại chi tiết</a>
+                        <a href="/admin/tours/<%= tour.id %>" class="btn btn-outline">← Quay lại chi tiết</a>
                     </div>
                     
                     <form action="/admin/tours/<%= tour.id %>" method="POST" style="max-width: 600px; margin: 0 auto;">
-                         <input type="hidden" name="_method" value="PATCH">
-                        
+                        <input type="hidden" name="_method" value="PATCH">
+
                         <div class="form-group">
                             <label>Tên tour *</label>
                             <input type="text" name="name" required value="<%= tour.name %>">
                         </div>
-                        
+
                         <div class="form-group">
                             <label>Hình ảnh</label>
-                            <input type="text" name="image" value="<%= tour.image %>">
+                            <input type="hidden" id="imageUrl" name="image" value="<%= tour.image || '' %>" />
+                            
+                            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                                <input type="file" id="tourImage" accept="image/*" 
+                                       style="flex:1; min-width:180px; padding:8px; border:1px solid #ddd; border-radius:6px; background:#fff;" />
+                                <button type="button" id="uploadBtn" class="btn btn-primary" 
+                                        style="padding:8px 20px; white-space:nowrap; border:none; border-radius:6px; cursor:pointer;">
+                                    Upload
+                                </button>
+                            
+                            <div id="previewContainer" style="margin-top:8px; display:none;">
+                                <img id="previewImage" src="" style="max-height:120px; border-radius:6px; border:1px solid #ddd;" />
+                            </div>
                         </div>
-                        
+
                         <div class="form-group">
                             <label>Mô tả *</label>
                             <textarea name="description" rows="5" required><%= tour.description %></textarea>
                         </div>
-                        
+
                         <div class="form-group">
                             <label>Mã tour *</label>
                             <input type="text" name="code" required value="<%= tour.code %>">
-                        </div>
-                        
+                        </div> 
+
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                             <div class="form-group">
                                 <label>Giá (USD)</label>
@@ -53,15 +65,15 @@
                                 <label>Thời gian</label>
                                 <input type="text" name="duration" value="<%= tour.duration %>">
                             </div>
-                        </div>
-                        
+                        </div> 
+
                         <div class="form-group">
                             <label>
                                 <input type="checkbox" name="isFeatured" value="true" <%= tour.isFeatured ? 'checked' : '' %>>
                                 Tour nổi bật
                             </label>
                         </div>
-                        
+
                         <div class="tour-form-actions">
                             <button type="submit" class="btn btn-primary">Cập nhật tour</button>
                             <a href="/tours/<%= tour.id %>" class="btn btn-cancel">Hủy</a>
@@ -70,11 +82,12 @@
                 </section>
             </div>
         </main>
-        
+
         <%- include('../../partials/footer') %>
     </div>
 
     <script src="/js/script.js" defer></script>
     <script src="/js/sse-client.js" defer></script>
+    <script src="/js/upload.js" defer></script>
 </body>
 </html>

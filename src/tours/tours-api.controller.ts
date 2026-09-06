@@ -6,10 +6,17 @@ import { UpdateTourDto } from './dto/update-tour.dto';
 import { PaginationDto } from '../common/dto/pagination.dto';
 import { HttpExceptionFilter } from '../common/filters/http-exception.filter';
 import { PaginationInterceptor } from '../common/interceptors/pagination.interceptor';
+import { CacheInterceptor } from '@nestjs/cache-manager';
+import { CacheControl } from '../common/decorators/cache-control.decorator'; 
+import { CacheControlInterceptor } from '../common/interceptors/cache-control.interceptor';
+import { ETagInterceptor } from '../common/interceptors/etag.interceptor'; 
+import { ElapsedTimeInterceptor } from '../common/interceptors/elapsed-time.interceptor';
+
 
 @ApiTags('Tours') // Nhosm trong Swagger
 @Controller('api/tours')
 @UseFilters(HttpExceptionFilter)
+@UseInterceptors(ElapsedTimeInterceptor, ETagInterceptor)
 export class ToursApiController {
   constructor(private readonly toursService: ToursService) {}
 
@@ -26,12 +33,23 @@ export class ToursApiController {
   @Get()
   @ApiOperation({ summary: 'Lấy danh sách tours có phân trang' })
   @ApiOkResponse({ description: 'Danh sách tours' })
-  @UseInterceptors(PaginationInterceptor)
+  @UseInterceptors(PaginationInterceptor, CacheInterceptor, CacheControlInterceptor)
+   @CacheControl(3600) // thêm cache một tiếng đồng hồ
   findAll(@Query() paginationDto: PaginationDto) {
     return this.toursService.findAll(paginationDto.search);
   }
 
+  @Get('featured')  // thêm endpoint mới
+  @ApiOperation({ summary: 'Lấy tours nổi bật' })
+  @UseInterceptors(CacheInterceptor, CacheControlInterceptor)
+  @CacheControl(7200)  // Cache 2 giờ
+  async getFeatured() {
+    return this.toursService.findFeatured(6);
+  }
+
   @Get(':id')
+  @UseInterceptors(CacheInterceptor) 
+  @CacheControl(7200)
   @ApiOperation({ summary: 'Lấy chi tiết tour theo ID' })
   @ApiParam({ name: 'id', description: 'ID của tour' })
   @ApiOkResponse({ description: 'Chi tiết tour' })

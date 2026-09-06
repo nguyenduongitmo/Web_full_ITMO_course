@@ -358,6 +358,23 @@
     .tour-form-actions {
         flex-direction: column;
     }
+
+    .upload-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .upload-row .btn-upload {
+        max-width: 100%;
+    }
+    
+    .upload-manual-url {
+        flex-direction: column;
+    }
+    
+    .upload-wrapper {
+        padding: 12px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -472,5 +489,18 @@
     }
     .feedback__rating-display {
         font-size: 14px;
+    }
+    .upload-wrapper input[type="file"] {
+        font-size: 12px;
+        padding: 8px 10px;
+    }
+    
+    .upload-wrapper .btn-upload {
+        font-size: 13px;
+        padding: 8px 16px;
+    }
+    
+    .upload-preview img {
+        max-height: 150px;
     }
 }
