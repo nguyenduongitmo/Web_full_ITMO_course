@@ -2,6 +2,64 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Booking {
+  bookingCode: String!
+  createdAt: DateTime!
+  email: String!
+  fullName: String!
+  id: ID!
+  passengers: Int!
+  phone: String
+  status: String!
+  travelDate: DateTime!
+  updatedAt: DateTime!
+}
+
+type Contact {
+  budget: String
+  createdAt: DateTime!
+  destination: String
+  email: String!
+  fullName: String!
+  id: ID!
+  interest: String
+  message: String!
+  phone: String
+  subscribe: Boolean!
+  travelDate: String
+}
+
+input CreateBookingInput {
+  email: String!
+  fullName: String!
+  passengers: Int!
+  phone: String!
+  tourId: String!
+  travelDate: String!
+  userId: String!
+}
+
+input CreateContactInput {
+  budget: String
+  destination: String
+  email: String!
+  fullName: String!
+  interest: String
+  message: String!
+  phone: String
+  subscribe: Boolean
+  travelDate: String
+}
+
+input CreateFeedbackInput {
+  comment: String!
+  email: String!
+  fullName: String!
+  rating: Int!
+  tourId: String
+  userId: String
+}
+
 input CreateTourInput {
   code: String
   description: String! = ""
@@ -17,13 +75,37 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type Feedback {
+  comment: String!
+  createdAt: DateTime!
+  email: String!
+  fullName: String!
+  id: ID!
+  rating: String!
+}
+
 type Mutation {
+  createBooking(input: CreateBookingInput!): Booking!
+  createContact(input: CreateContactInput!): Contact!
+  createFeedback(input: CreateFeedbackInput!): Feedback!
   createTour(input: CreateTourInput!): Tour!
+  deleteBooking(id: ID!): Booking!
+  deleteContact(id: ID!): Contact!
+  deleteFeedback(id: ID!): Feedback!
   deleteTour(id: ID!): Tour!
+  updateBooking(id: ID!, input: UpdateBookingInput!): Booking!
+  updateContact(id: ID!, input: UpdateContactInput!): Contact!
+  updateFeedback(id: ID!, input: UpdateFeedbackInput!): Feedback!
   updateTour(id: ID!, input: UpdateTourInput!): Tour!
 }
 
 type Query {
+  booking(id: ID!): Booking!
+  bookings: [Booking!]!
+  contact(id: ID!): Contact!
+  contacts: [Contact!]!
+  feedback(id: ID!): Feedback!
+  feedbacks: [Feedback!]!
   tour(id: ID!): Tour!
   tours(search: String): [Tour!]!
 }
@@ -39,6 +121,34 @@ type Tour {
   name: String!
   price: Float
   updatedAt: DateTime!
+}
+
+input UpdateBookingInput {
+  email: String
+  fullName: String
+  passengers: Int
+  phone: String
+  status: String
+  travelDate: String
+}
+
+input UpdateContactInput {
+  budget: String
+  destination: String
+  email: String
+  fullName: String
+  interest: String
+  message: String
+  phone: String
+  subscribe: Boolean
+  travelDate: String
+}
+
+input UpdateFeedbackInput {
+  comment: String
+  email: String
+  fullName: String
+  rating: Int
 }
 
 input UpdateTourInput {

@@ -1,16 +1,15 @@
 import { InputType, Field } from '@nestjs/graphql';
-import { IsOptional, IsString, IsEmail, IsBoolean } from 'class-validator';@InputType()
+import { IsString, IsEmail, IsOptional, IsBoolean } from 'class-validator';
 
-export class UpdateContactInput {
-    @Field({ nullable: true })
-    @IsOptional()
+@InputType()
+export class CreateContactInput {
+    @Field()
     @IsString()
-    fullName?: string;
+    fullName!: string;
 
-    @Field({ nullable: true })
-    @IsOptional()
+    @Field()
     @IsEmail()
-    email?: string;
+    email!: string;
 
     @Field({ nullable: true })
     @IsOptional()
@@ -37,13 +36,13 @@ export class UpdateContactInput {
     @IsString()
     travelDate?: string;
 
-    @Field({ nullable: true })
-    @IsOptional()
+    @Field()
     @IsString()
-    message?: string;
+    message!: string;
 
     @Field({ nullable: true })
     @IsOptional()
     @IsBoolean()
     subscribe?: boolean;
+
 }
