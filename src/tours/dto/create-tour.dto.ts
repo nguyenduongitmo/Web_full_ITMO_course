@@ -28,12 +28,13 @@ export class CreateTourDto {
   description: string ="";
 
   @ApiProperty({
-    description: 'Mã tour',
+    description: 'Mã tour (để trống để tự động tạo)',
     example: '#ROYAL-01-VN-RU',
+    required: false,
   })
   @IsString()
-  @IsNotEmpty()
-  code: string ="";
+  @IsOptional()
+  code?: string;
 
   @ApiProperty({
     description: 'Giá tour (RUB)',

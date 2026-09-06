@@ -80,4 +80,14 @@ export class FeedbacksService {
       where: { id },
     });
   }
+
+  async findByTourId(tourId: string) {
+    return this.prisma.feedback.findMany({
+        where: { tourId },
+        include: {
+            user: true,
+            tour: true,
+        },
+    });
+  }
 }

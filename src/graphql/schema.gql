@@ -1,0 +1,52 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+input CreateTourInput {
+  code: String
+  description: String! = ""
+  duration: String
+  image: String
+  isFeatured: Boolean
+  name: String! = ""
+  price: Float
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Mutation {
+  createTour(input: CreateTourInput!): Tour!
+  deleteTour(id: ID!): Tour!
+  updateTour(id: ID!, input: UpdateTourInput!): Tour!
+}
+
+type Query {
+  tour(id: ID!): Tour!
+  tours(search: String): [Tour!]!
+}
+
+type Tour {
+  code: String!
+  createdAt: DateTime!
+  description: String!
+  duration: String
+  id: ID!
+  image: String!
+  isFeatured: Boolean!
+  name: String!
+  price: Float
+  updatedAt: DateTime!
+}
+
+input UpdateTourInput {
+  code: String
+  description: String
+  duration: String
+  image: String
+  isFeatured: Boolean
+  name: String
+  price: Float
+}

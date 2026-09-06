@@ -133,4 +133,14 @@ export class BookingsService {
       data: { status },
     });
   }
+
+  async findByTourId(tourId: string) {
+    return this.prisma.booking.findMany({
+      where: { tourId },
+      include: {
+        user: true,
+        tour: true,
+      },
+    });
+  }
 }

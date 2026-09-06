@@ -7,10 +7,11 @@ import { BookingsModule } from './bookings/bookings.module';
 import { FeedbacksModule } from './feedbacks/feedbacks.module';
 import { ContactsModule } from './contacts/contacts.module';
 import { SseModule } from './sse/sse.module';
+import { GraphqlModule } from './graphql/graphql.module';
 
 
 @Module({
-  imports: [PrismaModule, ToursModule, BookingsModule, FeedbacksModule, ContactsModule,  SseModule,],
+  imports: [PrismaModule, ToursModule, BookingsModule, FeedbacksModule, ContactsModule,  SseModule, GraphqlModule],
   controllers: [AppController],
   providers: [AppService],
 })
