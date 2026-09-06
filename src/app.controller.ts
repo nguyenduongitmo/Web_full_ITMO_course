@@ -1,4 +1,4 @@
-import { Controller, Get, Render, Param } from '@nestjs/common';
+import { Controller, Get, Render, Param, Query } from '@nestjs/common';
 import { AppService } from './app.service';
 
 @Controller()
@@ -38,13 +38,13 @@ export class AppController {
   
   @Get('tours')
   @Render('user/tours')
-  async getToursPage() {
-    const data = await this.appService.getToursPageData();
+  async getToursPage(@Query('search') search?:string) {
+    const data = await this.appService.getToursPageData(search);
     return {
       ...data,
       currentPath: '/tours',
       showBanner: false,
-      searchQuery: '',
+      searchQuery: search || '', //  Truyền search vào view
     };
   }
 

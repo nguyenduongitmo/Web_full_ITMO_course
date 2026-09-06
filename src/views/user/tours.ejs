@@ -18,6 +18,7 @@
 <body>
     <div class="app-wrapper">
         <%- include('../partials/header', { isLoggedIn, username, currentPath }) %>
+        <%- include('../partials/search', { searchQuery: searchQuery }) %>
             <main class="main">
                 <div class="container">
                     <section class="section tours-header">
@@ -27,8 +28,8 @@
                                 <%= tours.length %> tour đang chờ bạn khám phá
                             </p>
                         </div>
-
-
+                        
+                        
                         <% if (tours.length> 0) { %>
                             <div class="tour__grid">
                                 <% tours.forEach(function(tour) { %>

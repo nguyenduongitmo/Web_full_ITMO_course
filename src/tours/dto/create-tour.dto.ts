@@ -11,11 +11,11 @@ export class CreateTourDto {
   name: string = "";
 
   @ApiProperty({
-    description: 'URL hình ảnh',
-    example: 'https://example.com/moscow.jpg',
+    description: 'URL hình ảnh (có thể là URL hoặc tên file local)',
+    example: 'https://example.com/moscow.jpg hoặc moscow.jpg',
     required: false,
   })
-  @IsUrl()
+  @IsString()
   @IsOptional()
   image?: string;
 

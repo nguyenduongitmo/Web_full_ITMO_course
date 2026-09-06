@@ -89,6 +89,66 @@ export class ToursService {
     return tour;
   }
 
+  async findFeatured(limit: number = 6) {
+    return this.prisma.tour.findMany({
+      where: { isFeatured: true },
+      take: limit,
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  async findAllWithFilters(filters: {
+    search?: string;
+    minPrice?: number;
+    maxPrice?: number;
+    duration?: string;
+    sortBy?: string;
+    sortOrder?: 'asc' | 'desc';
+  }) {
+    const {
+      search,
+      minPrice,
+      maxPrice,
+      duration,
+      sortBy = 'createdAt',
+      sortOrder = 'desc',
+    } = filters;
+
+    const where: any = {};
+
+    if (search) {
+      where.OR = [
+        { name: { contains: search, mode: 'insensitive' } },
+        { description: { contains: search, mode: 'insensitive' } },
+        { code: { contains: search, mode: 'insensitive' } },
+      ];
+    }
+
+    if (minPrice !== undefined || maxPrice !== undefined) {
+      where.price = {};
+      if (minPrice !== undefined) where.price.gte = minPrice;
+      if (maxPrice !== undefined) where.price.lte = maxPrice;
+    }
+
+    if (duration) {
+      where.duration = duration;
+    }
+
+    const orderBy: any = {};
+    if (sortBy === 'price') {
+      orderBy.price = sortOrder;
+    } else if (sortBy === 'name') {
+      orderBy.name = sortOrder;
+    } else {
+      orderBy.createdAt = sortOrder;
+    }
+
+    return this.prisma.tour.findMany({
+      where,
+      orderBy,
+    });
+  }
+
   async update(id: string, updateTourDto: UpdateTourDto) {
     // update = cập nhật record có id
     // Chỉ cập nhật các field được gửi lên
@@ -160,8 +220,8 @@ export class ToursService {
     const skip = page && limit ? (page - 1) * limit : undefined;
     const take = limit || undefined;
     // Nếu page và limit đều có giá trị -> true
-  // Nếu 1 trong 2 là undefined hoặc 0 → false
-  // điều_kiện ? giá_trị_nếu_đúng : giá_trị_nếu_sai
+    // Nếu 1 trong 2 là undefined hoặc 0 → false
+    // điều_kiện ? giá_trị_nếu_đúng : giá_trị_nếu_sai
 
     return await this.prisma.tour.findMany({
       where,

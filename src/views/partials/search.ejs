@@ -3,12 +3,18 @@
         <h2 class="search-section__title">Bạn muốn khám phá điểm đến nào?</h2>
         <p class="search-section__subtitle">Nhập tên thành phố để tìm tour phù hợp</p>
         
+        <!--  
+            - action="/tours": Khi submit sẽ chuyển đến trang tours
+            - method="GET": Query params hiển thị trên URL (có thể chia sẻ liên kết)
+            - name="search": Controller đọc từ req.query.search
+        -->
+
         <form class="search-form" action="/tours" method="GET">
             <div class="search-form__group">
                 <input 
                     type="text" 
                     class="search-form__input" 
-                    name="q" 
+                    name="search" 
                     placeholder="Nhập tên địa điểm (ví dụ: Moscow, Saint Petersburg...)"
                     value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>"
                 >
@@ -16,12 +22,12 @@
             </div>
             <div class="search-form__suggestions">
                 <span>Gợi ý:</span>
-                <a href="/tours?q=Moscow">Moscow</a>
-                <a href="/tours?q=Saint%20Petersburg">Saint Petersburg</a>
-                <a href="/tours?q=Sochi">Sochi</a>
-                <a href="/tours?q=Kazan">Kazan</a>
-                <a href="/tours?q=Vladivostok">Vladivostok</a>
-                <a href="/tours?q=Murmansk">Murmansk</a>
+                <a href="/tours?search=Moscow">Moscow</a>
+                <a href="/tours?search=Saint%20Petersburg">Saint Petersburg</a>
+                <a href="/tours?search=Sochi">Sochi</a>
+                <a href="/tours?search=Kazan">Kazan</a>
+                <a href="/tours?search=Vladivostok">Vladivostok</a>
+                <a href="/tours?search=Murmansk">Murmansk</a>
             </div>
         </form>
     </div>

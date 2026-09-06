@@ -1,16 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from './prisma/prisma.service';
+import { ToursService } from './tours/tours.service'; 
 
 @Injectable()
 export class AppService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly toursService: ToursService) {}
 
   // Trang chủ
   async getHomePageData() {
-    const featuredTours = await this.prisma.tour.findMany({
-      where: { isFeatured: true },
-      take: 3,
-    });
+    const featuredTours = await this.toursService.findFeatured(3);
 
     return {
       title: 'ROYAL TRAVEL - Trang chủ',
@@ -32,10 +29,8 @@ export class AppService {
   }
 
   // Trang tour
-  async getToursPageData() {
-    const tours = await this.prisma.tour.findMany({
-      orderBy: { name: 'asc' },
-    });
+  async getToursPageData(search?: string) {
+    const tours = await this.toursService.findAll(search);
 
     return {
       title: 'ROYAL TRAVEL - Tour du lịch',
@@ -46,9 +41,7 @@ export class AppService {
   }
 
    async getTourDetail(id: string) {
-    return await this.prisma.tour.findUnique({
-      where: { id },
-    });
+    return await this.toursService.findOne(id);
   }
 
   // Trang liên hệ
