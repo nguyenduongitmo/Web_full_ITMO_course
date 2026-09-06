@@ -1,6 +1,10 @@
-import { Resolver, Query, Mutation, Args, ID } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, ID, ResolveField, Parent } from '@nestjs/graphql';
 import { ToursService } from '../../tours/tours.service';
+import { BookingsService } from '../../bookings/bookings.service';
+import { FeedbacksService } from '../../feedbacks/feedbacks.service';
 import { Tour } from '../types/tour.type';
+import { Booking } from '../types/booking.type';
+import { Feedback } from '../types/feedback.type';
 import { CreateTourInput } from '../inputs/create-tour.input';
 import { UpdateTourInput } from '../inputs/update-tour.input';
 import { NotFoundException } from '@nestjs/common';
@@ -8,8 +12,10 @@ import { NotFoundException } from '@nestjs/common';
 @Resolver(() => Tour)
 //  Resolver này xử lý các query/mutation liên quan đến Tour
 export class ToursResolver {
-    constructor(private readonly toursService: ToursService
+    constructor(private readonly toursService: ToursService,
         // inject ToursService để sử dụng lại logic nghiệp vụ từ REST
+        private readonly bookingsService: BookingsService,
+        private readonly feedbacksService: FeedbacksService,
     ) { }
 
     @Query(() => [Tour], { name: 'tours' })
@@ -48,5 +54,15 @@ export class ToursResolver {
     @Mutation(() => Tour, { name: 'deleteTour' })
     async deleteTour(@Args('id', { type: () => ID }) id: string) {
         return this.toursService.remove(id);
+    }
+
+    @ResolveField(() => [Booking], { name: "bookings" })
+    async getBookings(@Parent() tour: Tour) {
+        return this.bookingsService.findByTourId(tour.id);
+    }
+
+    @ResolveField(() => [Feedback], { name: 'feedbacks' })
+    async getFeedbacks(@Parent() tour: Tour) {
+        return this.feedbacksService.findByTourId(tour.id);
     }
 }

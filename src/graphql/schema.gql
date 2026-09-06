@@ -111,10 +111,12 @@ type Query {
 }
 
 type Tour {
+  bookings: [Booking!]!
   code: String!
   createdAt: DateTime!
   description: String!
   duration: String
+  feedbacks: [Feedback!]!
   id: ID!
   image: String!
   isFeatured: Boolean!
