@@ -49,6 +49,11 @@ Built-in pagination support
 - **class-validator** - Data validation
 - **class-transformer** - Data transformation
 
+### Storage
+- **Cloudflare R2** - S3-compatible object storage (10GB free tier)
+- **@aws-sdk/client-s3** - AWS SDK for S3 API
+- **Multer** - File upload handling
+
 ### Frontend (from previous semester)
 - HTML5 - Semantic markup
 - CSS3 - Custom styling with Flexbox and Grid
@@ -344,6 +349,48 @@ mutation {
   }
 }
 ```
+## Lab 6: BFF + Caching + File Upload (Completed)
+
+### 1. Performance Monitoring
+- **ElapsedTimeInterceptor**: Measures request processing time
+- Adds `X-Elapsed-Time` header to API responses
+- Logs request duration to console
+- Passes `serverTime` to EJS templates
+
+### 2. Client-side Caching
+- **ETagInterceptor**: Generates ETag from response content (MD5 hash)
+- Returns `304 Not Modified` when content unchanged
+- **CacheControl Decorator**: Sets `Cache-Control` header with configurable TTL
+- Examples: `@CacheControl(3600)` for 1-hour cache
+
+### 3. Server-side Caching
+- **CacheModule**: In-memory caching with TTL 10 seconds
+- Applied to Tours API endpoints (`/api/tours`, `/api/tours/:id`, `/api/tours/featured`)
+- Reduces database load and improves response time
+
+### 4. File Upload to Cloudflare R2
+- **StorageModule**: Infrastructure layer for file storage
+- S3-compatible API using AWS SDK
+- Upload to Cloudflare R2 (10GB free tier)
+- File validation:
+  - Max size: 5MB
+  - Allowed types: JPEG, PNG, GIF, WEBP
+- Returns public URL for uploaded images
+
+### 5. Admin UI Integration
+- Upload button in Create/Edit tour forms
+- Preview image after upload
+- Automatic URL insertion into form field
+
+### API Endpoints
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/upload/image` | Upload image to R2 storage |
+| DELETE | `/api/upload/:key` | Delete image from R2 storage |
+
+
+---
+
 ## Migration and Seeding
 
 ### Apply database schema
@@ -445,7 +492,7 @@ npm run start:prod
 |Lab 3	|CRUD + SSE	| 12|	Completed
 |Lab 4	|RESTful API + Swagger|	12|	Completed
 |Lab 5	|GraphQL	|12|	Completed
-|Lab 6	|BFF + Caching	|10|	Pending
+|Lab 6	|BFF + Caching	|10|	Completed
 |Lab 7	|Authentication	|12|	Pending
 |TOTAL	||	80	
 
