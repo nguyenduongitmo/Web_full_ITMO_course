@@ -36,6 +36,13 @@ https://web-full-itmo-course.onrender.com
 - Prisma ORM - Database access and management
 - PostgreSQL - Relational database (Render PostgreSQL)
 - EJS - Template engine
+- @nestjs/graphql - GraphQL module for NestJS
+- @nestjs/apollo - Apollo Server integration
+- graphql - GraphQL core library
+- Code-first approach with TypeScript decorators
+- Field Resolvers for nested queries
+
+Built-in pagination support
 
 ### API & Documentation
 - **Swagger/OpenAPI** - RESTful API documentation
@@ -182,7 +189,161 @@ GET /api/tours?page=2&limit=5
 |500	|Internal server error
 
 ---
+## Lab 5: GraphQL API
+### 1. GraphQL Setup
 
+- **GraphQL Playground**: https://web-full-itmo-course.onrender.com/graphql
+- **Approach**: Code-first with NestJS
+- **Driver**: Apollo Server
+- **Schema**: Auto-generated at `src/graphql/schema.gql`
+
+### 2. GraphQL Schema
+
+#### Object Types
+
+| Type | Description | Key Fields |
+|------|-------------|------------|
+| **Tour** | Travel packages | id, name, code, price, duration, isFeatured |
+| **Booking** | Tour reservations | id, bookingCode, fullName, email, passengers, status |
+| **Feedback** | Customer reviews | id, fullName, email, rating, comment |
+| **Contact** | Customer inquiries | id, fullName, email, phone, message |
+
+#### Queries
+
+| Query | Description | Parameters |
+|-------|-------------|------------|
+| `tours` | Get all tours (with search) | `search: String` |
+| `tour` | Get tour by ID | `id: ID!` |
+| `toursPaginated` | Get tours with pagination | `pagination: PaginationInput` |
+| `bookings` | Get all bookings | - |
+| `booking` | Get booking by ID | `id: ID!` |
+| `feedbacks` | Get all feedbacks | - |
+| `feedback` | Get feedback by ID | `id: ID!` |
+| `contacts` | Get all contacts | - |
+| `contact` | Get contact by ID | `id: ID!` |
+
+#### Mutations
+
+| Mutation | Description | Input Type |
+|----------|-------------|------------|
+| `createTour` | Create new tour | `CreateTourInput!` |
+| `updateTour` | Update tour | `id: ID!, input: UpdateTourInput!` |
+| `deleteTour` | Delete tour | `id: ID!` |
+| `createBooking` | Create new booking | `CreateBookingInput!` |
+| `updateBooking` | Update booking | `id: ID!, input: UpdateBookingInput!` |
+| `deleteBooking` | Delete booking | `id: ID!` |
+| `createFeedback` | Create new feedback | `CreateFeedbackInput!` |
+| `updateFeedback` | Update feedback | `id: ID!, input: UpdateFeedbackInput!` |
+| `deleteFeedback` | Delete feedback | `id: ID!` |
+| `createContact` | Create new contact | `CreateContactInput!` |
+| `updateContact` | Update contact | `id: ID!, input: UpdateContactInput!` |
+| `deleteContact` | Delete contact | `id: ID!` |
+
+### 3. Nested Queries (Field Resolvers)
+
+Get tour with bookings and feedbacks
+``` 
+query {
+  tour(id: "tour-id") {
+    name
+    price
+    bookings {
+      fullName
+      passengers
+      status
+    }
+    feedbacks {
+      fullName
+      rating
+      comment
+    }
+  }
+}
+```
+
+### 4. Pagination
+```
+query {
+  toursPaginated(pagination: {
+    page: 1,
+    limit: 10,
+    search: "Moscow"
+  }) {
+    data {
+      id
+      name
+      code
+      price
+    }
+    total
+    page
+    limit
+    totalPages
+    hasNext
+    hasPrev
+  }
+}
+```
+
+### 5. GraphQL Playground
+Open the built-in GraphQL Playground at: http://localhost:3000/graphql
+
+#### Example Queries
+
+- Get all tours:
+
+```
+query {
+  tours {
+    id
+    name
+    price
+    code
+    isFeatured
+  }
+}
+```
+
+- Get tour with nested data:
+
+```
+query {
+  tour(id: "tour-id") {
+    name
+    description
+    price
+    bookings {
+      fullName
+      passengers
+      status
+    }
+    feedbacks {
+      fullName
+      rating
+      comment
+    }
+  }
+}
+```
+
+- Create new tour:
+
+```
+mutation {
+  createTour(input: {
+    name: "New Tour",
+    description: "Tour description",
+    price: 25000,
+    duration: "5 days",
+    isFeatured: true
+  }) {
+    id
+    name
+    code
+    createdAt
+  }
+}
+```
 ## Migration and Seeding
 
 ### Apply database schema
@@ -283,7 +444,7 @@ npm run start:prod
 |Lab 2	|Domain Model and Database	|12	|Completed
 |Lab 3	|CRUD + SSE	| 12|	Completed
 |Lab 4	|RESTful API + Swagger|	12|	Completed
-|Lab 5	|GraphQL	|12|	Pending
+|Lab 5	|GraphQL	|12|	Completed
 |Lab 6	|BFF + Caching	|10|	Pending
 |Lab 7	|Authentication	|12|	Pending
 |TOTAL	||	80	

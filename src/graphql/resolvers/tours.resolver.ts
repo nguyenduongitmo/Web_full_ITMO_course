@@ -8,6 +8,8 @@ import { Feedback } from '../types/feedback.type';
 import { CreateTourInput } from '../inputs/create-tour.input';
 import { UpdateTourInput } from '../inputs/update-tour.input';
 import { NotFoundException } from '@nestjs/common';
+import { PaginationInput } from '../inputs/pagination.input';
+import { PaginatedTours } from '../types/paginated-tour.type';
 
 @Resolver(() => Tour)
 //  Resolver này xử lý các query/mutation liên quan đến Tour
@@ -34,6 +36,35 @@ export class ToursResolver {
             throw new NotFoundException(`Tour ${id} not found`);
         }
         return tour;
+    }
+
+    // Query có pagination
+    @Query(() => PaginatedTours, { name: 'toursPaginated' })
+    async getToursPaginated(
+        @Args('pagination', { nullable: true }) pagination?: PaginationInput,
+    ) {
+        // Lấy tham số, nếu không có thì dùng giá trị mặc định
+        const page = pagination?.page || 1;
+        const limit = pagination?.limit || 10;
+        const search = pagination?.search;
+
+        //Chạy 2 queries song song để tăng tốc
+        const [data, total] = await Promise.all([
+            this.toursService.findAllPaginated(search, page, limit),
+            this.toursService.count(search),
+        ]);
+
+        const totalPages = Math.ceil(total / limit);
+
+        return {
+            data,
+            total,
+            page,
+            limit,
+            totalPages,
+            hasNext: page < totalPages,
+            hasPrev: page > 1,       
+        };
     }
 
     @Mutation(() => Tour, { name: 'createTour' })

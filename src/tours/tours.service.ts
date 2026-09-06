@@ -1,4 +1,4 @@
-import { Injectable, ConflictException, NotFoundException} from '@nestjs/common';
+import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateTourDto } from './dto/create-tour.dto';
 import { UpdateTourDto } from './dto/update-tour.dto';
@@ -8,14 +8,14 @@ import { UpdateTourDto } from './dto/update-tour.dto';
 export class ToursService {
   // Inject Prismaservice để dùng Database
   // khai báo thoe cú pháp typescript tên biến : kiểu dữ liệu, 
-    // ở đây tạo biến prisma có kiểu PrismaService có thể dùng this.prisma cho toàn bộ class
-  constructor(private prisma: PrismaService){}
+  // ở đây tạo biến prisma có kiểu PrismaService có thể dùng this.prisma cho toàn bộ class
+  constructor(private prisma: PrismaService) { }
 
   async generateTourCode(): Promise<string> {
     const tours = await this.prisma.tour.findMany({
       select: { code: true },
     });
-    
+
     let maxNumber = 0;
     tours.forEach(tour => {
       // Regex để trích xuất số từ code
@@ -25,7 +25,7 @@ export class ToursService {
         if (num > maxNumber) maxNumber = num;
       }
     });
-    
+
     const sequence = String(maxNumber + 1).padStart(2, '0');
     return `#ROYAL-${sequence}-VN-RU`;
   }
@@ -56,33 +56,33 @@ export class ToursService {
       isFeatured: createTourDto.isFeatured === true,  // -> Chuyển sang boolean
     };
     return await this.prisma.tour.create({
-        data,
+      data,
     });
   }
 
   async findAll(searchQuery?: string) {
-  const where: any = {};
-  
-  if (searchQuery) {
-    where.OR = [
-      { name: { contains: searchQuery, mode: 'insensitive' } },        // Tìm theo tên
-      { description: { contains: searchQuery, mode: 'insensitive' } },  // Tìm theo mô tả
-      { code: { contains: searchQuery, mode: 'insensitive' } },         // Tìm theo mã tour
-    ];
-    // chế độ mốt tìm kiếm không phân biệt hoa thường
+    const where: any = {};
+
+    if (searchQuery) {
+      where.OR = [
+        { name: { contains: searchQuery, mode: 'insensitive' } },        // Tìm theo tên
+        { description: { contains: searchQuery, mode: 'insensitive' } },  // Tìm theo mô tả
+        { code: { contains: searchQuery, mode: 'insensitive' } },         // Tìm theo mã tour
+      ];
+      // chế độ mốt tìm kiếm không phân biệt hoa thường
+    }
+
+    return await this.prisma.tour.findMany({
+      where,
+      orderBy: { name: 'asc' },
+    });
   }
-  
-  return await this.prisma.tour.findMany({
-    where,
-    orderBy: { name: 'asc' },
-  });
-}
 
   async findOne(id: string) {
     // findUnique = tìm theo id duy nhất, lấy 1 tour theo id
     const tour = await this.prisma.tour.findUnique({
-      where: {id},
-    }) ;
+      where: { id },
+    });
     if (!tour) {
       throw new NotFoundException(`Tour with ID ${id} not found`);
     }
@@ -117,7 +117,7 @@ export class ToursService {
       const featuredValue = updateTourDto.isFeatured as any;
       data.isFeatured = featuredValue === 'true' || featuredValue === true;
     }
-    
+
     return await this.prisma.tour.update({
       where: { id },
       data,
@@ -128,9 +128,47 @@ export class ToursService {
     // detele = xóa record có id
     // Thêm: Kiểm tra tour tồn tại
     await this.findOne(id);
-    
+
     return await this.prisma.tour.delete({
-      where: {id},
+      where: { id },
     });
+  }
+
+  // thêm phương thức đếm trang
+  async count(search?: string): Promise<number> {
+    const where: any = {};
+    if (search) {
+      where.OR = [
+        { name: { contains: search, mode: 'insensitive' } },
+        { description: { contains: search, mode: 'insensitive' } },
+        { code: { contains: search, mode: 'insensitive' } },
+      ];
+    }
+    return this.prisma.tour.count({ where });
+  }
+
+  // Tìm với pagination
+  async findAllPaginated(search?: string, page?: number, limit?: number) {
+    const where: any = {};
+    if (search) {
+      where.OR = [
+        { name: { contains: search, mode: 'insensitive' } },
+        { description: { contains: search, mode: 'insensitive' } },
+        { code: { contains: search, mode: 'insensitive' } },
+      ];
+    }
+    const skip = page && limit ? (page - 1) * limit : undefined;
+    const take = limit || undefined;
+    // Nếu page và limit đều có giá trị -> true
+  // Nếu 1 trong 2 là undefined hoặc 0 → false
+  // điều_kiện ? giá_trị_nếu_đúng : giá_trị_nếu_sai
+
+    return await this.prisma.tour.findMany({
+      where,
+      orderBy: { name: 'asc' },
+      skip,   // Bỏ qua records trước đó
+      take,   // Chỉ lấy số lượng cần
+    });
+
   }
 }

@@ -19,7 +19,7 @@
     "start": "node dist/main",
     "start:dev": "npx nest start --watch",
     "start:prod": "node dist/main",
-    "postinstall": "npm install --legacy-peer-deps && npx prisma generate"
+    "postinstall": "npx prisma generate"
   },
   "dependencies": {
     "@apollo/server": "^4.10.0",

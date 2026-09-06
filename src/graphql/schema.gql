@@ -99,6 +99,22 @@ type Mutation {
   updateTour(id: ID!, input: UpdateTourInput!): Tour!
 }
 
+type PaginatedTours {
+  data: [Tour!]!
+  hasNext: Boolean!
+  hasPrev: Boolean!
+  limit: Int!
+  page: Int!
+  total: Int!
+  totalPages: Int!
+}
+
+input PaginationInput {
+  limit: Int = 10
+  page: Int = 1
+  search: Int = 10
+}
+
 type Query {
   booking(id: ID!): Booking!
   bookings: [Booking!]!
@@ -108,6 +124,7 @@ type Query {
   feedbacks: [Feedback!]!
   tour(id: ID!): Tour!
   tours(search: String): [Tour!]!
+  toursPaginated(pagination: PaginationInput): PaginatedTours!
 }
 
 type Tour {
