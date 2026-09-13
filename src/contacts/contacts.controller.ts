@@ -1,11 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Render, Redirect, Sse } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Render, Redirect, Sse , Req, UseGuards} from '@nestjs/common';
 import { Observable, Subject } from 'rxjs';
 import { ContactsService } from './contacts.service';
 import { CreateContactDto } from './dto/create-contact.dto';
 import { UpdateContactDto } from './dto/update-contact.dto';
 import { SseService } from '../sse/sse.service';
+import { Roles, CurrentUser } from '../auth/auth.decorators';
+import { AuthGuard } from '../auth/auth.guard';
 
 @Controller('admin/contacts')
+@UseGuards(AuthGuard)
+@Roles('ADMIN')
 export class ContactsController {
   constructor(
     private readonly contactsService: ContactsService,
@@ -14,13 +18,12 @@ export class ContactsController {
 
   @Get(':id/edit')
   @Render('admin/contacts/edit')
-  async editPage(@Param('id') id: string) {
+  async editPage(@Param('id') id: string, @Req() req: Request) {
     const contact = await this.contactsService.findOne(id);
     if (!contact) return { redirect: '/admin/contacts' };
     return {
       title: 'Sửa liên hệ',
-      isLoggedIn: true,
-      username: 'Admin',
+      user: req['user'] || null,
       contact: contact,
       currentPath: '/admin/contacts',
       showBanner: false,
@@ -29,13 +32,12 @@ export class ContactsController {
 
   @Get(':id')
   @Render('admin/contacts/detail')
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string, @Req() req: Request) {
     const contact = await this.contactsService.findOne(id);
     if (!contact) return { redirect: '/admin/contacts' };
     return {
       title: 'Chi tiết liên hệ',
-      isLoggedIn: true,
-      username: 'Admin',
+      user: req['user'] || null,
       contact: contact,
       currentPath: '/admin/contacts',
       showBanner: false,
@@ -44,12 +46,11 @@ export class ContactsController {
 
   @Get()
   @Render('admin/contacts/index')
-  async findAll() {
+  async findAll(@Req() req: Request) {
     const contacts = await this.contactsService.findAll();
     return {
       title: 'Quản lý liên hệ',
-      isLoggedIn: true,
-      username: 'Admin',
+      user: req['user'] || null,
       contacts: contacts,
       currentPath: '/admin/contacts',
       showBanner: false,
@@ -58,7 +59,7 @@ export class ContactsController {
 
   @Post()
   @Redirect('/admin/contacts')
-  async create(@Body() createContactDto: CreateContactDto) {
+  async create(@Body() createContactDto: CreateContactDto, @CurrentUser() user: any) {
     const contact = await this.contactsService.create(createContactDto);
     
     this.sseService.emit({
@@ -75,7 +76,7 @@ export class ContactsController {
 
   @Patch(':id')
   @Redirect('/admin/contacts')
-  async update(@Param('id') id: string, @Body() updateContactDto: UpdateContactDto) {
+  async update(@Param('id') id: string, @Body() updateContactDto: UpdateContactDto, @CurrentUser() user: any) {
     const contact = await this.contactsService.update(id, updateContactDto);
     
     this.sseService.emit({
@@ -92,7 +93,7 @@ export class ContactsController {
 
   @Delete(':id')
   @Redirect('/admin/contacts')
-  async remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string, @CurrentUser() user: any) {
     const contact = await this.contactsService.findOne(id);
     await this.contactsService.remove(id);
     

@@ -1,11 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Render, Redirect, Sse } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Render, Redirect, Sse, Req, UseGuards } from '@nestjs/common';
 import { Observable, Subject } from 'rxjs';
 import { FeedbacksService } from './feedbacks.service';
 import { CreateFeedbackDto } from './dto/create-feedback.dto';
 import { UpdateFeedbackDto } from './dto/update-feedback.dto';
 import { SseService } from '../sse/sse.service';
+import { Roles, CurrentUser } from '../auth/auth.decorators';
+import { AuthGuard } from '../auth/auth.guard';
+import type { Request } from 'express';
 
 @Controller('admin/feedbacks')
+@UseGuards(AuthGuard)
+@Roles('ADMIN')
 export class FeedbacksController {
   constructor(
     private readonly feedbacksService: FeedbacksService,
@@ -14,13 +19,12 @@ export class FeedbacksController {
 
   @Get(':id/edit')
   @Render('admin/feedbacks/edit')
-  async editPage(@Param('id') id: string) {
+  async editPage(@Param('id') id: string, @Req() req: Request) {
     const feedback = await this.feedbacksService.findOne(id);
     if (!feedback) return { redirect: '/admin/feedbacks' };
     return {
       title: 'Sửa đánh giá',
-      isLoggedIn: true,
-      username: 'Admin',
+      user: req['user'] || null,
       feedback: feedback,
       currentPath: '/admin/feedbacks',
       showBanner: false,
@@ -29,13 +33,12 @@ export class FeedbacksController {
 
   @Get(':id')
   @Render('admin/feedbacks/detail')
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string, @Req() req: Request) {
     const feedback = await this.feedbacksService.findOne(id);
     if (!feedback) return { redirect: '/admin/feedbacks' };
     return {
       title: 'Chi tiết đánh giá',
-      isLoggedIn: true,
-      username: 'Admin',
+      user: req['user'] || null,
       feedback: feedback,
       currentPath: '/admin/feedbacks',
       showBanner: false,
@@ -44,12 +47,11 @@ export class FeedbacksController {
 
   @Get()
   @Render('admin/feedbacks/index')
-  async findAll() {
+  async findAll(@Req() req: Request) {
     const feedbacks = await this.feedbacksService.findAll();
     return {
       title: 'Quản lý đánh giá',
-      isLoggedIn: true,
-      username: 'Admin',
+      user: req['user'] || null,
       feedbacks: feedbacks,
       currentPath: '/admin/feedbacks',
       showBanner: false,
@@ -58,12 +60,12 @@ export class FeedbacksController {
 
   @Post()
   @Redirect('/admin/feedbacks')
-  async create(@Body() createFeedbackDto: CreateFeedbackDto) {
+  async create(@Body() createFeedbackDto: CreateFeedbackDto, @CurrentUser() user: any) {
     const feedback = await this.feedbacksService.create(createFeedbackDto);
     
     this.sseService.emit({
       type: 'create',
-      message: `Đánh giá của "${feedback.fullName}" đã được tạo!`,
+      message: `Đánh giá của "${feedback.fullName}" đã được tạo bởi ${user.fullName}!`,
       module: 'feedbacks',
       data: feedback,
       timestamp: new Date().toISOString(),
@@ -75,7 +77,7 @@ export class FeedbacksController {
 
   @Patch(':id')
   @Redirect('/admin/feedbacks')
-  async update(@Param('id') id: string, @Body() updateFeedbackDto: UpdateFeedbackDto) {
+  async update(@Param('id') id: string, @Body() updateFeedbackDto: UpdateFeedbackDto, @CurrentUser() user: any) {
     const feedback = await this.feedbacksService.update(id, updateFeedbackDto);
     
     this.sseService.emit({
@@ -92,7 +94,7 @@ export class FeedbacksController {
 
   @Delete(':id')
   @Redirect('/admin/feedbacks')
-  async remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string, @CurrentUser() user: any) {
     const feedback = await this.feedbacksService.findOne(id);
     await this.feedbacksService.remove(id);
     
