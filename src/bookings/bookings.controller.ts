@@ -1,11 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Render, Redirect } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Render, Redirect, Req, UseGuards } from '@nestjs/common';
 import { Observable, Subject } from 'rxjs';
 import { BookingsService } from './bookings.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { UpdateBookingDto } from './dto/update-booking.dto';
 import { SseService } from '../sse/sse.service';
+import type { Request } from 'express';
+import { Roles, CurrentUser } from '../auth/auth.decorators';
+import { AuthGuard } from '../auth/auth.guard';
 
 @Controller('admin/bookings')
+@UseGuards(AuthGuard)
+@Roles('ADMIN')  
 export class BookingsController {
   constructor(
     private readonly bookingsService: BookingsService,
@@ -15,13 +20,12 @@ export class BookingsController {
   // - QUAN TRỌNG: ĐẶT :id/edit TRƯỚC :id -
   @Get(':id/edit')
   @Render('admin/bookings/edit')
-  async editPage(@Param('id') id: string) {
+  async editPage(@Param('id') id: string, @Req() req: Request) {
     const booking = await this.bookingsService.findOne(id);
     if (!booking) return { redirect: '/admin/bookings' };
     return {
       title: 'Sửa đặt tour',
-      isLoggedIn: true,
-      username: 'Admin',
+      user: req['user'] || null,
       booking: booking,
       currentPath: '/admin/bookings',
       showBanner: false,
@@ -30,13 +34,12 @@ export class BookingsController {
 
   @Get(':id')
   @Render('admin/bookings/detail')
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string, @Req() req: Request) {
     const booking = await this.bookingsService.findOne(id);
     if (!booking) return { redirect: '/admin/bookings' };
     return {
       title: 'Chi tiết đặt tour',
-      isLoggedIn: true,
-      username: 'Admin',
+      user: req['user'] || null,
       booking: booking,
       currentPath: '/admin/bookings',
       showBanner: false,
@@ -45,12 +48,11 @@ export class BookingsController {
 
   @Get()
   @Render('admin/bookings/index')
-  async findAll() {
+  async findAll(@Req() req: Request) {
     const bookings = await this.bookingsService.findAll();
     return {
       title: 'Quản lý đặt tour',
-      isLoggedIn: true,
-      username: 'Admin',
+      user: req['user'] || null,
       bookings: bookings,
       currentPath: '/admin/bookings',
       showBanner: false,
@@ -59,13 +61,13 @@ export class BookingsController {
 
   @Post()
   @Redirect('/admin/bookings')
-  async create(@Body() createBookingDto: CreateBookingDto) {
+  async create(@Body() createBookingDto: CreateBookingDto, @CurrentUser() user: any) {
     const booking = await this.bookingsService.create(createBookingDto);
     
     // Dùng SseService thay vì Subject riêng
     this.sseService.emit({
       type: 'create',
-      message: `Booking của "${booking.fullName}" đã được tạo!`,
+      message: `Booking của "${booking.fullName}" đã được tạo bởi ${user.fullName}!`,
       module: 'bookings',
       data: booking,
       timestamp: new Date().toISOString(),
@@ -77,7 +79,7 @@ export class BookingsController {
 
   @Patch(':id')
   @Redirect('/admin/bookings')
-  async update(@Param('id') id: string, @Body() updateBookingDto: UpdateBookingDto) {
+  async update(@Param('id') id: string, @Body() updateBookingDto: UpdateBookingDto, @CurrentUser() user: any,) {
     const booking = await this.bookingsService.update(id, updateBookingDto);
     
     this.sseService.emit({
@@ -94,7 +96,7 @@ export class BookingsController {
 
   @Delete(':id')
   @Redirect('/admin/bookings')
-  async remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string, @CurrentUser() user: any) {
     const booking = await this.bookingsService.findOne(id);
     await this.bookingsService.remove(id);
     

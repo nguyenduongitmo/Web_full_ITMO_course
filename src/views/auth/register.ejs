@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="auth-page">
+        <div class="auth-container register">
+            <div class="logo">
+                <img src="/images/logo.jpg" alt="ROYAL TRAVEL">
+                <h1>ROYAL TRAVEL</h1>
+            </div>
+            
+            <h2>Tạo tài khoản</h2>
+            <p class="subtitle">Bắt đầu hành trình khám phá nước Nga</p>
+
+            <% if (typeof error !== 'undefined' && error) { %>
+                <div class="alert-error"><%= error %></div>
+            <% } %>
+
+            <form action="/auth/register" method="POST">
+                <div class="form-group">
+                    <label for="fullName">Họ và tên</label>
+                    <input type="text" id="fullName" name="fullName" 
+                           value="<%= typeof fullName !== 'undefined' ? fullName : '' %>" 
+                           placeholder="Nguyễn Văn A" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" 
+                           value="<%= typeof email !== 'undefined' ? email : '' %>" 
+                           placeholder="your@email.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Mật khẩu</label>
+                    <input type="password" id="password" name="password" 
+                           placeholder="Ít nhất 6 ký tự" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Xác nhận mật khẩu</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" 
+                           placeholder="Nhập lại mật khẩu" required>
+                </div>
+
+                <button type="submit" class="btn-submit">Đăng ký</button>
+            </form>
+
+            <div class="auth-footer">
+                Đã có tài khoản? <a href="/auth/login">Đăng nhập</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

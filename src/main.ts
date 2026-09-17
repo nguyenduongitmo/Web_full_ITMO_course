@@ -4,20 +4,35 @@ import { join } from 'path';
 import { AppModule } from './app.module';
 import { ValidationPipe, Logger } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import * as express from 'express';
+import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const logger = new Logger('Bootstrap');
 
-  // Dùng process.cwd() để lấy thư mục gốc project
-  const projectRoot = process.cwd();
-  // express.json() để parse JSON
+  //CORS - Cho phép gọi API từ domain khác
+  app.enableCors({
+    origin: [
+      'http://localhost:3000',
+      'http://localhost:5173',
+      'https://web-full-itmo-course.onrender.com',
+      'https://*.onrender.com',
+    ],
+    methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Cookie'],
+    credentials: true,
+    maxAge: 86400,
+  });
+
+  // Cookie Parser - Đọc cookie từ request
+  app.use(cookieParser());
+
+  // Middleware cơ bản
   app.use(express.json());
-  // express.urlencoded() để parse form data từ HTML
   app.use(express.urlencoded({ extended: true }));
 
+  // Method override cho HTML forms
   app.use((req: any, res: any, next: any) => {
     if (req.method === 'POST' && req.body && req.body._method) {
       const newMethod = req.body._method.toUpperCase();
@@ -26,6 +41,14 @@ async function bootstrap() {
     }
     next();
   });
+
+
+  // Dùng process.cwd() để lấy thư mục gốc project
+  const projectRoot = process.cwd();
+  // express.json() để parse JSON
+  app.use(express.json());
+  // express.urlencoded() để parse form data từ HTML
+  app.use(express.urlencoded({ extended: true }));
 
   // Static files: public/
   app.useStaticAssets(join(projectRoot, 'public'));
@@ -62,12 +85,29 @@ async function bootstrap() {
       - NestJS, Prisma, PostgreSQL
       - Validation với class-validator
       - Pagination với HATEOAS
+
+      Authentication
+      Sử dụng JWT Bearer Token để xác thực.
+      1. Đăng nhập tại /auth/login
+      2. Lấy token từ cookie hoặc dùng Bearer token
+      3. Gửi token trong header: Authorization: Bearer <token>
     `)
     .setVersion('1.0')
     .addTag('Tours', 'Quản lý tour chung')
     .addTag('Bookings', 'Quản lý đặt tour')
     .addTag('Feedbacks', 'Quản lý đánh giá')
     .addTag('Contacts', 'Quản lý liên hệ')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'JWT',
+        description: 'Nhập JWT token vào đây',
+        in: 'header',
+      },
+      'JWT-auth',
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

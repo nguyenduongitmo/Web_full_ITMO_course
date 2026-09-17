@@ -6,13 +6,12 @@ export class AppService {
   constructor(private readonly toursService: ToursService) {}
 
   // Trang chủ
-  async getHomePageData() {
+  async getHomePageData(user?: any) {
     const featuredTours = await this.toursService.findFeatured(3);
 
     return {
       title: 'ROYAL TRAVEL - Trang chủ',
-      isLoggedIn: false,
-      username: null,
+      user: user || null,
       featuredTours: featuredTours,
       mission: 'Dùng trải nghiệm văn hóa đặc sắc để chuẩn bị hành trang cho thế hệ tương lai.',
       vision: 'Trở thành đơn vị hàng đầu trong lĩnh vực du ngoại cho thế hệ trẻ.',
@@ -29,27 +28,29 @@ export class AppService {
   }
 
   // Trang tour
-  async getToursPageData(search?: string) {
+  async getToursPageData(search?: string, user?: any) {
     const tours = await this.toursService.findAll(search);
 
     return {
       title: 'ROYAL TRAVEL - Tour du lịch',
-      isLoggedIn: false,
-      username: null,
+      user: user || null,
       tours: tours,
     };
   }
 
-   async getTourDetail(id: string) {
-    return await this.toursService.findOne(id);
+   async getTourDetail(id: string, user?: any) {
+    const tour = await this.toursService.findOne(id);
+    return {
+      tour: tour,
+      user: user || null
+    }
   }
 
   // Trang liên hệ
-  async getContactPageData() {
+  async getContactPageData(user?: any) {
     return {
       title: 'ROYAL TRAVEL - Liên hệ',
-      isLoggedIn: false,
-      username: null,
+      user:user || null,
       email: 'info@royaltravel.com',
       phone: '+79523747668',
     };

@@ -1,15 +1,21 @@
-import { Controller, Get, Render, Param, Query } from '@nestjs/common';
+import { Controller, Get, Render, Param, Query, Req,  UseGuards } from '@nestjs/common';
 import { AppService } from './app.service';
+import type { Request } from 'express'; 
+import { Public } from './auth/auth.decorators'; 
+import { AuthGuard } from './auth/auth.guard';
+import { Roles } from './auth/auth.decorators';
 
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
   // Trang chủ
+  @Public()
   @Get()
   @Render('user/index')
-  async getHomePage() {
-    const data = await this.appService.getHomePageData();
+  async getHomePage(@Req() req:Request) {
+    const user = req['user'] || null; // lấy user từ middleware
+    const data = await this.appService.getHomePageData(user);
     return {
       ...data,
       currentPath: '/',
@@ -19,29 +25,32 @@ export class AppController {
   }
 
   // Trang tour
-
-  @Get('tours/:id')
+  @Public()
+  @Get('user/tours/:id')
   @Render('user/tour-detail')
-  async getTourDetail(@Param('id') id: string) {
-    const tour = await this.appService.getTourDetail(id);
-    if (!tour) return { redirect: '/tours' };
+  async getTourDetail(@Param('id') id: string, @Req() req:Request) {
+    const user = req['user'] || null;
+    const result = await this.appService.getTourDetail(id, user);
+    if (!result.tour) return { redirect: '/tours' };
     return {
-      title: `ROYAL TRAVEL - ${tour.name}`,
-      isLoggedIn: false,
-      username: null,
-      tour: tour,
+      title: `ROYAL TRAVEL - ${result.tour.name}`,
+      user: result.user,
+      tour: result.tour,
       currentPath: '/tours',
       showBanner: false,
       includeSSE: true,
     };
   }
   
-  @Get('tours')
+  @Public()
+  @Get('user/tours')
   @Render('user/tours')
-  async getToursPage(@Query('search') search?:string) {
-    const data = await this.appService.getToursPageData(search);
+  async getToursPage(@Req() req: Request, @Query('search') search?: string) {
+    const user = req['user'] || null;
+    const data = await this.appService.getToursPageData(search, user);
     return {
       ...data,
+
       currentPath: '/tours',
       showBanner: false,
       searchQuery: search || '', //  Truyền search vào view
@@ -51,12 +60,15 @@ export class AppController {
   
 
   // Trang liên hệ
+  @Public()
   @Get('contact')
   @Render('user/contact')
-  async getContactPage() {
-    const data = await this.appService.getContactPageData();
+  async getContactPage(@Req() req: Request) {
+    const user = req['user'] || null;
+    const data = await this.appService.getContactPageData(user);
     return {
       ...data,
+      user: req['user'] || null,
       currentPath: '/contact',
       showBanner: false,
       searchQuery: '',
@@ -64,6 +76,20 @@ export class AppController {
         <script src="/js/feedback.js" defer></script>
         <script src="/js/api-feedback.js" defer></script>
       `,
+    };
+  }
+
+  @Get('admin')
+  @UseGuards(AuthGuard)
+  @Roles('ADMIN')
+  @Render('admin/index')
+  async getAdminPage(@Req() req: Request) {
+    const user = req['user'] || null;
+    return {
+      title: 'ROYAL TRAVEL - Trang quản trị',
+      user: user,
+      currentPath: '/admin',
+      showBanner: false,
     };
   }
 }

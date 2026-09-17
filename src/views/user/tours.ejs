@@ -17,7 +17,7 @@
 
 <body>
     <div class="app-wrapper">
-        <%- include('../partials/header', { isLoggedIn, username, currentPath }) %>
+        <%- include('../partials/header', { user, currentPath }) %>
         <%- include('../partials/search', { searchQuery: searchQuery }) %>
             <main class="main">
                 <div class="container">
@@ -60,7 +60,7 @@
                                             </div>
                                             <div class="tour__code">Mã tour: <%= tour.code %>
                                             </div>
-                                            <a href="/tours/<%= tour.id %>" class="btn btn-primary btn-block">Xem chi
+                                            <a href="/user/tours/<%= tour.id %>" class="btn btn-primary btn-block">Xem chi
                                                 tiết</a>
                                         </div>
                                     </article>

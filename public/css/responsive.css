@@ -503,4 +503,35 @@
     .upload-preview img {
         max-height: 150px;
     }
+
+     .auth-container {
+        padding: 30px 20px;
+    }
+    
+    .auth-container .logo img {
+        height: 50px;
+    }
+    
+    .auth-container .logo h1 {
+        font-size: 20px;
+    }
+    
+    .auth-container h2 {
+        font-size: 20px;
+    }
+    
+    .auth-container .form-group input {
+        padding: 10px 14px;
+        font-size: 14px;
+    }
+    
+    .auth-container .btn-submit {
+        padding: 12px;
+        font-size: 15px;
+    }
+    
+    .auth-container.register .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
 }

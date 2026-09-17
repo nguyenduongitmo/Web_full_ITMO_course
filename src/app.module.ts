@@ -11,10 +11,10 @@ import { GraphqlModule } from './graphql/graphql.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { StorageModule } from './storage/storage.module';
 import { ElapsedTimeInterceptor } from './common/interceptors/elapsed-time.interceptor';
-
+import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [PrismaModule, ToursModule, BookingsModule, FeedbacksModule, ContactsModule, SseModule, GraphqlModule, StorageModule],
+  imports: [PrismaModule, ToursModule, BookingsModule, FeedbacksModule, ContactsModule, SseModule, GraphqlModule, StorageModule, AuthModule.forRoot(process.env.JWT_SECRET),],
   controllers: [AppController],
   providers: [AppService, {
     provide: APP_INTERCEPTOR,

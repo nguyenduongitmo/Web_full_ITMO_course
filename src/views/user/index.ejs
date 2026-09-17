@@ -12,7 +12,7 @@
 </head>
 <body>
     <div class="app-wrapper">
-        <%- include('../partials/header', { isLoggedIn, username, currentPath }) %>
+        <%- include('../partials/header', { user, currentPath }) %>
         
         <% if (showBanner !== false) { %>
             <%- include('../partials/banner') %>
@@ -82,7 +82,7 @@
                         <% }); %>
                     </div>
                     <div class="section__footer">
-                        <a href="/tours" class="btn btn-outline">Xem tất cả tour</a>
+                        <a href="/user/tours" class="btn btn-outline">Xem tất cả tour</a>
                     </div>
                 </section>
                 <div class="section-divider">

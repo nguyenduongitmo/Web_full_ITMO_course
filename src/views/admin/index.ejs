@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROYAL TRAVEL - Trang quản trị</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="app-wrapper">
+        <%- include('../partials/header', { user, currentPath }) %>
+
+            <main class="main">
+                <div class="container">
+                    <section class="section admin-section">
+                        <div class="section__header">
+                            <h1 class="section__title">Trang quản trị</h1>
+                            <p class="section__subtitle">Chào mừng <%= user.fullName %>, chọn mục bạn muốn quản lý</p>
+                        </div>
+
+                        <div class="tour__grid">
+
+                            <!-- Tour -->
+                            <a href="/admin/tours" class="tour__card" style="text-decoration: none;">
+                                <div class="tour__card-body" style="text-align: center; padding: 40px 20px;">
+                                    <div style="font-size: 48px; margin-bottom: 16px;"></div>
+                                    <h3 class="tour__title">Quản lý Tour</h3>
+                                    <p class="tour__desc">Thêm, sửa, xóa các tour du lịch</p>
+                                </div>
+                            </a>
+
+                            <!-- Booking -->
+                            <a href="/admin/bookings" class="tour__card" style="text-decoration: none;">
+                                <div class="tour__card-body" style="text-align: center; padding: 40px 20px;">
+                                    <div style="font-size: 48px; margin-bottom: 16px;"></div>
+                                    <h3 class="tour__title">Quản lý Booking</h3>
+                                    <p class="tour__desc">Quản lý đặt tour của khách hàng</p>
+                                </div>
+                            </a>
+
+                            <!-- Feedback -->
+                            <a href="/admin/feedbacks" class="tour__card" style="text-decoration: none;">
+                                <div class="tour__card-body" style="text-align: center; padding: 40px 20px;">
+                                    <div style="font-size: 48px; margin-bottom: 16px;"></div>
+                                    <h3 class="tour__title">Quản lý Feedback</h3>
+                                    <p class="tour__desc">Quản lý đánh giá của khách hàng</p>
+                                </div>
+                            </a>
+
+                            <!-- Contact -->
+                            <a href="/admin/contacts" class="tour__card" style="text-decoration: none;">
+                                <div class="tour__card-body" style="text-align: center; padding: 40px 20px;">
+                                    <div style="font-size: 48px; margin-bottom: 16px;"></div>
+                                    <h3 class="tour__title">Quản lý Contact</h3>
+                                    <p class="tour__desc">Quản lý liên hệ từ khách hàng</p>
+                                </div>
+                            </a>
+
+                        </div>
+                    </section>
+                </div>
+            </main>
+
+            <%- include('../partials/footer') %>
+    </div>
+
+    <script src="/js/script.js" defer></script>
+</body>
+
+</html>

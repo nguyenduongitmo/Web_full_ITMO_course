@@ -14,20 +14,33 @@
                             <a href="/" class="<%= currentPath === '/' ? 'active' : '' %>">Trang chủ</a>
                         </li>
                         <li class="header__menu-item">
-                            <a href="/tours" class="<%= currentPath === '/tours' ? 'active' : '' %>">Tour du lịch</a>
+                            <a href="/user/tours" class="<%= currentPath === '/tours' ? 'active' : '' %>">Tour du lịch</a>
                         </li>
                         <li class="header__menu-item">
                             <a href="/contact" class="<%= currentPath === '/contact' ? 'active' : '' %>">Liên hệ</a>
                         </li>
+                    
+                    <!-- Admin link - chỉ hiển thị với admin-->
+                        <% if (user && user.role === 'ADMIN') { %>
+                        <li class="header__menu-item">
+                            <a href="/admin" class="<%= currentPath === '/admin' ? 'active' : '' %>">Quản trị</a>
+                        </li>
+                        <% } %>
                     </ul>
                     
+                    <!-- Phần Auth - hiển thị user -->
                     <div class="header__auth">
-                        <% if (isLoggedIn) { %>
-                            <span class="header__user">Xin chào, <strong><%= username %></strong></span>
-                            <a href="/logout" class="btn btn-logout">Đăng xuất</a>
+                        <% if (user) { %>
+                            <span class="header__user">
+                                Xin chào, <strong><%= user.fullName %></strong>
+                                <% if (user.role === 'ADMIN') { %>
+                                    <span style="background:#dc3545;color:#fff;padding:2px 8px;border-radius:4px;font-size:12px;margin-left:5px;">Admin</span>
+                                <% } %>
+                            </span>
+                            <a href="/auth/logout" class="btn btn-logout">Đăng xuất</a>
                         <% } else { %>
-                            <a href="/login" class="btn btn-login">Đăng nhập</a>
-                            <a href="/register" class="btn btn-register">Đăng ký</a>
+                            <a href="/auth/login" class="btn btn-login">Đăng nhập</a>
+                            <a href="/auth/register" class="btn btn-register">Đăng ký</a>
                         <% } %>
                     </div>
                 </div>

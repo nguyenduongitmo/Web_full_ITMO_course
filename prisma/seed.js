@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import * as bcrypt from 'bcrypt'; 
 
 const prisma = new PrismaClient();
 
@@ -115,29 +116,38 @@ async function main() {
   //  USERS 
   console.log('\nBắt đầu seed users...');
 
+  // thêm phần hash password trước khi lưu
+  const adminPassword = await bcrypt.hash('admin123', 10);
+  const userPassword = await bcrypt.hash('user123', 10);
+
   const admin = await prisma.user.upsert({
     where: { email: 'admin@royaltravel.com' },
-    update: {},
+    update: {
+        password: adminPassword, // cập nhật hash mới
+        role: 'ADMIN',
+    },
     create: {
       email: 'admin@royaltravel.com',
       fullName: 'Quản trị viên',
-      password: 'admin123',
+      password: adminPassword, // Hash
       role: 'ADMIN',
     },
   });
-  console.log('  Admin: admin@royaltravel.com');
+  console.log('  Admin: admin@royaltravel.com / admin 123');
 
   const user1 = await prisma.user.upsert({
     where: { email: 'user@example.com' },
-    update: {},
+    update: {
+        password: userPassword, // cập nhật hash mới
+    },
     create: {
       email: 'user@example.com',
       fullName: 'Nguyễn Văn A',
-      password: 'user123',
+      password: userPassword,
       role: 'USER',
     },
   });
-  console.log('  User: user@example.com');
+  console.log('  User: user@example.com / user123');
 
   const user2 = await prisma.user.upsert({
     where: { email: 'tranthib@example.com' },
@@ -208,7 +218,10 @@ async function main() {
 
     for (const booking of bookingsData) {
       try {
-        await prisma.booking.create({ data: booking });
+        await prisma.booking.upsert({where: {bookingCode: booking.bookingCode}, // điều kiện tìm
+          update: booking,  // nếu có rồi thì cập nhật, chưa có thì tọa mới
+          create: booking,
+        });
         console.log(` Booking: ${booking.fullName} - ${booking.travelDate.toLocaleDateString('vi-VN')}`);
       } catch (error) {
         console.error('Lỗi seed booking:', error.message);
@@ -257,8 +270,19 @@ async function main() {
 
     for (const feedback of feedbacksData) {
       try {
+        const exists = await prisma.feedback.findFirst({
+        where: {
+        email: feedback.email,
+        comment: feedback.comment,
+      },
+    });
+
+    if (!exists){
         await prisma.feedback.create({ data: feedback });
         console.log(` Feedback: ${feedback.fullName} - ${feedback.rating}⭐`);
+      }
+      else{
+        console.log(`Feedback đã tồn tại: ${feedback.fullName}`);}
       } catch (error) {
         console.error('Lỗi seed feedback:', error.message);
       }
