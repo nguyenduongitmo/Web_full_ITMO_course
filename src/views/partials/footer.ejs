@@ -10,7 +10,7 @@
                 <h4 class="footer__title">Liên kết</h4>
                 <ul class="footer__links">
                     <li><a href="/">Trang chủ</a></li>
-                    <li><a href="/user/tours"">Tour du lịch</a></li>
+                    <li><a href="/user/tours">Tour du lịch</a></li>
                     <li><a href="/contact">Liên hệ</a></li>
                 </ul>
             </div>
@@ -28,9 +28,14 @@
         <div class="footer__bottom">
             <p>&copy; 2026 ROYAL TRAVEL. All rights reserved.</p>
             <div class="performance-info" style="text-align:center;padding:10px;font-size:12px;color:#999;">
-                Trang được tải trong <strong><%= serverTime %></strong>
-                <span id="clientTime"></span>
-            </div>
+                Server: <strong><%= serverTime || '0ms' %></strong> | Client: <span id="clientTime">0ms</span>
         </div>
     </div>
 </footer>
+
+<script>
+    window.addEventListener('load', function() {
+        const t = Math.round(performance.now());
+        document.getElementById('clientTime').textContent = t + 'ms';
+    });
+</script>

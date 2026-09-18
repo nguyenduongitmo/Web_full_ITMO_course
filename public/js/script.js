@@ -90,20 +90,20 @@
         });
     }
 
-    window.addEventListener('load', function() {
-        var loadTime = performance.now().toFixed(2);
-        var footerBottom = document.querySelector('.footer__bottom');
+    // window.addEventListener('load', function() {
+    //     var loadTime = performance.now().toFixed(2);
+    //     var footerBottom = document.querySelector('.footer__bottom');
 
-        if (footerBottom) {
-            var oldTime = footerBottom.querySelector('.load-time');
-            if (oldTime) oldTime.remove();
+    //     if (footerBottom) {
+    //         var oldTime = footerBottom.querySelector('.load-time');
+    //         if (oldTime) oldTime.remove();
 
-            var timeEl = document.createElement('span');
-            timeEl.className = 'load-time';
-            timeEl.textContent = 'Thời gian tải trang: ' + loadTime + ' ms';
-            footerBottom.appendChild(timeEl);
-        }
-    });
+    //         var timeEl = document.createElement('span');
+    //         timeEl.className = 'load-time';
+    //         timeEl.textContent = 'Thời gian tải trang: ' + loadTime + ' ms';
+    //         footerBottom.appendChild(timeEl);
+    //     }
+    // });
 
     document.addEventListener('DOMContentLoaded', function() {
         initMobileMenu();

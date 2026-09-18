@@ -6,10 +6,10 @@ import { SseService } from '../sse/sse.service';
 import { Roles, CurrentUser } from '../auth/auth.decorators';
 import { AuthGuard } from '../auth/auth.guard';
 import type { Request } from 'express';
-
+import { RolesGuard } from '../auth/auth.guard';
 
 @Controller('admin/tours')
-@UseGuards(AuthGuard)// bảo vệ toàn bộ admin route
+@UseGuards(AuthGuard, RolesGuard)// bảo vệ toàn bộ admin route
 @Roles('ADMIN')  
 export class ToursController {
   constructor(
