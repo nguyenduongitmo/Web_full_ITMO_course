@@ -8,18 +8,30 @@ import { Multer } from 'multer';
 export class StorageService {
   private s3Client: S3Client;
   private bucket: string;
+  private publicUrl: string;
 
   constructor() {
-    // Lấy config từ biến môi trường
-    this.bucket = process.env.S3_BUCKET || '';
+    console.log('S3 Config:');
+    console.log('S3_BUCKET:', JSON.stringify(process.env.S3_BUCKET));
+    console.log('S3_ENDPOINT:', JSON.stringify(process.env.S3_ENDPOINT));
+    console.log('S3_ACCESS_KEY_ID:', process.env.S3_ACCESS_KEY_ID ? 'Found' : 'Not found');
+    console.log('S3_SECRET_ACCESS_KEY:', process.env.S3_SECRET_ACCESS_KEY ? 'Found' : 'Not found');
+    console.log('R2_PUBLIC_URL:', JSON.stringify(process.env.R2_PUBLIC_URL));
+    // Lấy config từ biến môi trường, Trim để loại bỏ khoảng trắng thừa
+    this.bucket = (process.env.S3_BUCKET || '').trim();
+    this.publicUrl = (process.env.R2_PUBLIC_URL || '').trim();
 
+    // Kiểm tra bucket có tồn tại không
+    if (!this.bucket) {
+      console.error('Lỗi: S3_BUCKET không được cấu hình trong .env');
+    }
     // Tạo client kết nối tới Cloudflare R2
     this.s3Client = new S3Client({
-      endpoint: process.env.S3_ENDPOINT || '',
+      endpoint: (process.env.S3_ENDPOINT || '').trim(),
       region: 'auto',
       credentials: {
-        accessKeyId: process.env.S3_ACCESS_KEY_ID || '',
-        secretAccessKey: process.env.S3_SECRET_ACCESS_KEY || '',
+        accessKeyId: (process.env.S3_ACCESS_KEY_ID || '').trim(),
+        secretAccessKey: (process.env.S3_SECRET_ACCESS_KEY || '').trim(),
       },
     });
   }
@@ -31,6 +43,13 @@ export class StorageService {
    * @returns { url, key } - URL để truy cập và key để xóa sau
    */
   async uploadFile(file: Express.Multer.File, folder: string = 'tours') {
+    // Kiểm tra bucket trước khi upload
+    if (!this.bucket) {
+      throw new BadRequestException(
+        'S3_BUCKET chưa được cấu hình. Vui lòng kiểm tra biến môi trường.'
+      );
+    }
+
     // Kiểm tra file hợp lệ
     this.validateFile(file);
 
@@ -38,6 +57,8 @@ export class StorageService {
     const ext = path.extname(file.originalname);
     const fileName = `${uuidv4()}${ext}`;
     const key = `${folder}/${fileName}`; // Ví dụ: tours/abc123.jpg
+
+    console.log('Uploading:', { bucket: this.bucket, key });
 
     // Tạo lệnh upload
     const command = new PutObjectCommand({
@@ -50,10 +71,12 @@ export class StorageService {
     // Thực hiện upload
     await this.s3Client.send(command);
 
-    // Tạo URL để truy cập file
-    const endpoint = process.env.S3_ENDPOINT || '';
-    const url = `https://${this.bucket}.${endpoint.replace('https://', '')}/${key}`;
+     // Dùng R2_PUBLIC_URL
+    const url = this.publicUrl
+      ? `${this.publicUrl}/${key}`
+      : `https://${this.bucket}.${(process.env.S3_ENDPOINT || '').replace('https://', '')}/${key}`;
 
+    console.log('Uploaded:', url);
     return { url, key };
   }
 

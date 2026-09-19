@@ -35,7 +35,7 @@
                                 <% tours.forEach(function(tour) { %>
                                     <article class="tour__card">
                                         <div class="tour__card-image">
-                                            <img src="/images/<%= tour.image %>" alt="<%= tour.name %>">
+                                            <img src="<%= tour.image %>" alt="<%= tour.name %>">
                                             <% if (tour.isFeatured) { %>
                                                 <span class="tour__badge">Nổi bật</span>
                                                 <% } %>
@@ -70,7 +70,7 @@
                                 <div class="empty-state">
                                     <h3>Không tìm thấy tour</h3>
                                     <p>Vui lòng thử lại với từ khóa khác</p>
-                                    <a href="/tours" class="btn btn-primary">Xem tất cả tour</a>
+                                    <a href="/user/tours" class="btn btn-primary">Xem tất cả tour</a>
                                 </div>
                                 <% } %>
                 </div>

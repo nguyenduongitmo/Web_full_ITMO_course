@@ -62,8 +62,8 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
-      whitelist: true,
-      forbidNonWhitelisted: true,
+      whitelist: true, // Xóa các field không có trong DTO
+      forbidNonWhitelisted: true,  // Báo lỗi nếu có file lạ
       transformOptions: {
         enableImplicitConversion: true,
       },
