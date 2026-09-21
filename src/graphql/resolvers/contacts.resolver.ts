@@ -7,7 +7,7 @@ import { NotFoundException } from '@nestjs/common';
 
 @Resolver(() => Contact)
 export class ContactsResolver {
-    constructor(private readonly contactsService: ContactsService) { }
+    constructor(private readonly contactsService: ContactsService,) { }
 
     @Query(() => [Contact], { name: 'contacts' })
     async getContacts() {

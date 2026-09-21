@@ -1,4 +1,5 @@
 import { ObjectType, Field, ID, Int} from "@nestjs/graphql";
+import { Tour } from "./tour.type";
 
 @ObjectType()
 export class Contact{
@@ -34,4 +35,10 @@ export class Contact{
 
     @Field()
     createdAt!: Date;
+
+    @Field()
+    tourId!: string;
+    
+    @Field(() => Tour, { nullable: true })
+    tour?: Tour;
 }

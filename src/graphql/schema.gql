@@ -11,6 +11,8 @@ type Booking {
   passengers: Int!
   phone: String
   status: String!
+  tour: Tour
+  tourId: String!
   travelDate: DateTime!
   updatedAt: DateTime!
 }
@@ -26,6 +28,8 @@ type Contact {
   message: String!
   phone: String
   subscribe: Boolean!
+  tour: Tour
+  tourId: String!
   travelDate: String
 }
 
@@ -82,6 +86,8 @@ type Feedback {
   fullName: String!
   id: ID!
   rating: String!
+  tour: Tour
+  tourId: String!
 }
 
 type Mutation {

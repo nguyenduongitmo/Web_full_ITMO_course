@@ -1,5 +1,6 @@
 import { ObjectType, Field, ID, Int } from '@nestjs/graphql';
 import { StringValueNode } from 'graphql';
+import { Tour } from './tour.type';
 
 @ObjectType()
 export class Booking{
@@ -35,4 +36,9 @@ export class Booking{
     @Field()
     updatedAt!: Date;
 
+    @Field()
+    tourId!: string;
+
+    @Field(() => Tour, { nullable: true })
+    tour?: Tour;
 }

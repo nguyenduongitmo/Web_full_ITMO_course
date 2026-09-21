@@ -1,13 +1,17 @@
-import {Resolver, Query, Mutation, Args, ID} from '@nestjs/graphql'
+import {Resolver, Query, Mutation, Args, ID, ResolveField, Parent} from '@nestjs/graphql'
 import { FeedbacksService } from '../../feedbacks/feedbacks.service'
 import { Feedback } from '../types/feedback.type'
 import { CreateFeedbackInput } from '../inputs/create-feedback.input'
 import { UpdateFeedbackInput } from '../inputs/update-feedback.input'
 import { NotFoundException } from '@nestjs/common'
+import { Tour } from '../types/tour.type'
+import { ToursService } from '../../tours/tours.service'
 
 @Resolver(() => Feedback)
 export class FeedbacksResolver{
-    constructor (private readonly feedbacksService: FeedbacksService){}
+    constructor (private readonly feedbacksService: FeedbacksService, 
+                private readonly toursService: ToursService,
+    ){}
 
     @Query(() => [Feedback], {name: 'feedbacks'})
     async getFeebacks(){
@@ -40,4 +44,9 @@ export class FeedbacksResolver{
     async deleteFeedback(@Args('id', { type: () => ID }) id: string) {
         return this.feedbacksService.remove(id);
     }
+
+    @ResolveField(() => Tour, { name: 'tour', nullable: true })
+    async getTour(@Parent() feedback: Feedback) {
+        return this.toursService.findOne(feedback.tourId);
+  }
 }
