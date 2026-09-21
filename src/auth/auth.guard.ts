@@ -4,6 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import { IS_PUBLIC_KEY, ROLES_KEY } from './auth.decorators';
 import { Observable } from 'rxjs';
+import { ConfigService } from '@nestjs/config'; 
 
 // AuthGuard kiểm tra đăng nhập
 @Injectable()
@@ -12,13 +13,24 @@ export class AuthGuard implements CanActivate {
         private reflector: Reflector, // đọc metadât từ decoảtor
         private jwtService: JwtService, // verìy JWT Oken
         private prisma: PrismaService, // lấy người dùng từ csdl
+        private configService: ConfigService, 
     ) { }
    async canActivate(ctx: ExecutionContext): Promise<boolean> {
-        const isPublic = this.reflector.get<boolean>(IS_PUBLIC_KEY, ctx.getHandler());
+    //Cho phép GraphQL hoàn toàn (public)
+        const contextType = ctx.getType() as string;
+        if (contextType === 'graphql') {
+        return true;
+    }
+         // Kiểm tra @Public() - ĐỌC CẢ method VÀ class
+        const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+            ctx.getHandler(),
+            ctx.getClass(),
+        ]);
         if (isPublic) return true;
         // cho phép truy cập nếu đường dẫn công khai  
         const request = ctx.switchToHttp().getRequest();
 
+        // Safe access
         // Lấy token từ cookie hoặc header vì Web dùng cookie, API dùng header Authorization
         const token = request.cookies?.accessToken || request.headers.authorization?.split(' ')[1];
 
@@ -32,7 +44,10 @@ export class AuthGuard implements CanActivate {
         }
 
         try {
-            const payload = this.jwtService.verify(token);
+            // ktra với secret rõ ràng
+            const payload = this.jwtService.verify(token, {
+                secret: this.configService.get<string>('JWT_SECRET') || 'royal-travel-secret',
+            });
             const user = await this.prisma.user.findUnique({
                 where: { id: payload.sub },
                 select: { id: true, email: true, fullName: true, role: true },

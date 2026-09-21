@@ -1,12 +1,14 @@
 
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, HttpCode, HttpStatus, UseFilters, UseInterceptors, NotFoundException  } from "@nestjs/common";
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiCreatedResponse, ApiOkResponse, ApiNotFoundResponse, ApiBadRequestResponse, ApiConflictResponse } from "@nestjs/swagger";
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, HttpCode, HttpStatus, UseFilters, UseInterceptors, NotFoundException, UseGuards  } from "@nestjs/common";
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiCreatedResponse, ApiOkResponse, ApiNotFoundResponse, ApiBadRequestResponse, ApiConflictResponse, ApiBearerAuth } from "@nestjs/swagger";
 import { FeedbacksService } from './feedbacks.service';
 import { CreateFeedbackDto } from './dto/create-feedback.dto';
 import { UpdateFeedbackDto } from './dto/update-feedback.dto';
 import { PaginationDto } from '../common/dto/pagination.dto';
 import { HttpExceptionFilter } from '../common/filters/http-exception.filter';
 import { PaginationInterceptor } from '../common/interceptors/pagination.interceptor';
+import { AuthGuard } from '../auth/auth.guard';
+import { Public, Roles } from '../auth/auth.decorators';
 
 @ApiTags('Feedbacks')
 @Controller('api/feedbacks')
@@ -15,12 +17,14 @@ export class FeedbacksApiController {
   constructor(private readonly feedbacksService: FeedbacksService) {}
 
   @Post()
+  @Public()
   @ApiOperation({ summary: 'Tạo feedback mới' })
   create(@Body() createFeedbackDto: CreateFeedbackDto) {
     return this.feedbacksService.create(createFeedbackDto);
   }
 
-@Get()
+  @Get()
+  @Public()
   @ApiOperation({ summary: 'Lấy danh sách feedbacks có phân trang' })
   @UseInterceptors(PaginationInterceptor)
   findAll(@Query() paginationDto: PaginationDto) {
@@ -28,6 +32,7 @@ export class FeedbacksApiController {
   }
 
   @Get(':id')
+  @Public()
   @ApiOperation({ summary: 'Lấy chi tiết feedback' })
   @ApiParam({ name: 'id', description: 'ID của feedback' })
   async findOne(@Param('id') id: string) {
@@ -39,6 +44,7 @@ export class FeedbacksApiController {
   }
 
   @Patch(':id')
+  @Public()
   @ApiOperation({ summary: 'Cập nhật feedback' })
   @ApiParam({ name: 'id', description: 'ID của feedback' })
   update(
@@ -49,6 +55,7 @@ export class FeedbacksApiController {
   }
 
   @Delete(':id')
+  @Public()
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Xóa feedback' })
   @ApiParam({ name: 'id', description: 'ID của feedback' })

@@ -1,0 +1,8 @@
+{
+    "watch": ["src"],
+    "ext": "ts",
+    "ignore": ["src/**/*.spec.ts"],
+    "exec": "npx nest start",
+    "restartable": "rs",
+    "delay": 1000
+}

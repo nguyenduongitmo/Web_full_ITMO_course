@@ -3,7 +3,9 @@ import type { Response } from 'express';
 import { AuthService } from './auth.service';
 import { Public } from './auth.decorators';
 import * as express from 'express';
+import { ApiExcludeController } from '@nestjs/swagger';
 
+@ApiExcludeController() // ẩn khỏi swagger
 @Controller('auth')
 export class AuthController {
     constructor(private authService: AuthService) { }

@@ -6,14 +6,32 @@ import { Request, Response } from 'express';
 @Injectable()
 export class ElapsedTimeInterceptor implements NestInterceptor {
     intercept(context: ExecutionContext, next: CallHandler<any>): Observable<any> {
+        const start = Date.now();
+
+        // Xử lý grapql (không có request method)
+        const contextType = context.getType() as string;
+        if (contextType === 'graphql') {
+            return next.handle().pipe(
+                tap(() => {
+                    const elapsed = Date.now() - start;
+                    console.log(`[GraphQL] - ${elapsed}ms`);
+                }),
+                // Không sửa data của GraphQL
+            );
+        }
+
+        // xử lí http
         const ctx = context.switchToHttp();
         const request = ctx.getRequest<Request>();
         const response = ctx.getResponse<Response>();
 
-        const start = Date.now();
-        const method = request.method;
-        const url = request.url;
+        // truy cập an toàn
+         if (!request) {
+            return next.handle();
+        }
 
+        const method = request.method || 'UNKNOWN';
+        const url = request.url || '/';
 
         //Xử lý request và pipe qua các operators
         return next.handle().pipe(
@@ -24,29 +42,38 @@ export class ElapsedTimeInterceptor implements NestInterceptor {
                 console.log(`[${method}] ${url} - ${elapsed}ms`);
 
                 // Set header cho REST/GraphQL API
-                response.setHeader('X-Elapsed-Time', `${elapsed}ms`);
+                if (response && response.setHeader) {
+                    try {
+                        response.setHeader('X-Elapsed-Time', `${elapsed}ms`);
+                    } catch (e) {
+                        // Bỏ qua nếu header đã được gửi
+                    }
+                }
             }),
 
             //  map: Biến đổi dữ liệu phản hồi
             map((data) => {
                 const elapsed = Date.now() - start;
-                // Nếu là render view (có data.layout)
-                if (data && typeof data === 'object' && data.layout !== undefined) {
-                    return {
-                        ...data,
-                        serverTime: `${elapsed}ms`,   // Thêm thời gian server
-                        clientTime: '0ms',            // Client sẽ tính sau
-                    };
+                 // Chỉ xử lý object không phải array
+                if (!data || typeof data !== 'object' || Array.isArray(data)) {
+                    return data;
                 }
-                // Nếu là API (JSON), vẫn thêm serverTime vào body
-                if (data && typeof data === 'object') {
+
+                // Kiểm tra HTML page (thay vì data.layout)
+                const isHtmlPage =
+                    'currentPath' in data ||
+                    'showBanner' in data ||
+                    'title' in data;
+
+                if (isHtmlPage) {
                     return {
                         ...data,
                         serverTime: `${elapsed}ms`,
+                        clientTime: '0ms',
                     };
                 }
 
-                //Trường hợp khác (file, stream), không thay đổi
+                // API response - không thêm serverTime
                 return data;
             }),
         );

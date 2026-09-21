@@ -1,5 +1,5 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, HttpCode, HttpStatus, UseFilters, UseInterceptors, NotFoundException  } from "@nestjs/common";
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiCreatedResponse, ApiOkResponse, ApiNotFoundResponse, ApiBadRequestResponse, ApiConflictResponse } from "@nestjs/swagger";
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, HttpCode, HttpStatus, UseFilters, UseInterceptors, NotFoundException, UseGuards  } from "@nestjs/common";
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiCreatedResponse, ApiOkResponse, ApiNotFoundResponse, ApiBadRequestResponse, ApiConflictResponse, ApiBearerAuth  } from "@nestjs/swagger";
 import { ToursService } from './tours.service';
 import { CreateTourDto } from './dto/create-tour.dto';
 import { UpdateTourDto } from './dto/update-tour.dto';
@@ -11,6 +11,8 @@ import { CacheControl } from '../common/decorators/cache-control.decorator';
 import { CacheControlInterceptor } from '../common/interceptors/cache-control.interceptor';
 import { ETagInterceptor } from '../common/interceptors/etag.interceptor'; 
 import { ElapsedTimeInterceptor } from '../common/interceptors/elapsed-time.interceptor';
+import { Public, Roles } from '../auth/auth.decorators';  
+import { AuthGuard } from '../auth/auth.guard';
 
 
 @ApiTags('Tours') // Nhosm trong Swagger
@@ -21,16 +23,20 @@ export class ToursApiController {
   constructor(private readonly toursService: ToursService) {}
 
   @Post()
+  @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Tạo tour mới' })
   @ApiBody({ type: CreateTourDto })
   @ApiCreatedResponse({ description: 'Tour đã được tạo thành công' })
   @ApiBadRequestResponse({ description: 'Dữ liệu không hợp lệ' })
   @ApiConflictResponse({ description: 'Mã tour đã tồn tại' })
+  @Roles('ADMIN')
+  @UseGuards(AuthGuard)
   create(@Body() createTourDto: CreateTourDto) {
     return this.toursService.create(createTourDto);
   }
 
   @Get()
+  @Public()
   @ApiOperation({ summary: 'Lấy danh sách tours có phân trang' })
   @ApiOkResponse({ description: 'Danh sách tours' })
   @UseInterceptors(PaginationInterceptor, CacheInterceptor, CacheControlInterceptor)
@@ -40,6 +46,7 @@ export class ToursApiController {
   }
 
   @Get('featured')  // thêm endpoint mới
+  @Public()
   @ApiOperation({ summary: 'Lấy tours nổi bật' })
   @UseInterceptors(CacheInterceptor, CacheControlInterceptor)
   @CacheControl(7200)  // Cache 2 giờ
@@ -48,6 +55,7 @@ export class ToursApiController {
   }
 
   @Get(':id')
+  @Public()
   @UseInterceptors(CacheInterceptor) 
   @CacheControl(7200)
   @ApiOperation({ summary: 'Lấy chi tiết tour theo ID' })
@@ -63,11 +71,14 @@ export class ToursApiController {
   }
 
   @Patch(':id')
+  @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Cập nhật tour' })
   @ApiParam({ name: 'id', description: 'ID của tour' })
   @ApiBody({ type: UpdateTourDto })
   @ApiOkResponse({ description: 'Tour đã được cập nhật' })
   @ApiNotFoundResponse({ description: 'Không tìm thấy tour' })
+  @Roles('ADMIN')
+  @UseGuards(AuthGuard)
   async update(
     @Param('id') id: string,
     @Body() updateTourDto: UpdateTourDto,
@@ -81,10 +92,13 @@ export class ToursApiController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Xóa tour' })
   @ApiParam({ name: 'id', description: 'ID của tour' })
   @ApiResponse({ status: 204, description: 'Tour đã được xóa' })
   @ApiNotFoundResponse({ description: 'Không tìm thấy tour' })
+  @Roles('ADMIN')
+  @UseGuards(AuthGuard)
   async remove(@Param('id') id: string) {
     await this.toursService.remove(id);
   }

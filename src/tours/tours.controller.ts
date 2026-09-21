@@ -1,4 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Render, Redirect, Sse, UseGuards, Req } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'; 
 import { ToursService } from './tours.service';
 import { CreateTourDto } from './dto/create-tour.dto';
 import { UpdateTourDto } from './dto/update-tour.dto';
@@ -8,8 +9,9 @@ import { AuthGuard } from '../auth/auth.guard';
 import type { Request } from 'express';
 import { RolesGuard } from '../auth/auth.guard';
 
+@ApiTags('Admin - Tours')
+@ApiBearerAuth('JWT-auth')
 @Controller('admin/tours')
-@UseGuards(AuthGuard, RolesGuard)// bảo vệ toàn bộ admin route
 @Roles('ADMIN')  
 export class ToursController {
   constructor(

@@ -1,5 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Render, Redirect, Sse, Req, UseGuards } from '@nestjs/common';
 import { Observable, Subject } from 'rxjs';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'; 
 import { FeedbacksService } from './feedbacks.service';
 import { CreateFeedbackDto } from './dto/create-feedback.dto';
 import { UpdateFeedbackDto } from './dto/update-feedback.dto';
@@ -8,6 +9,8 @@ import { Roles, CurrentUser } from '../auth/auth.decorators';
 import { AuthGuard } from '../auth/auth.guard';
 import type { Request } from 'express';
 
+@ApiTags('Admin - Feedbacks')
+@ApiBearerAuth('JWT-auth')
 @Controller('admin/feedbacks')
 @UseGuards(AuthGuard)
 @Roles('ADMIN')

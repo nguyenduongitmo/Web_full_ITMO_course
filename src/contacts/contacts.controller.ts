@@ -6,7 +6,10 @@ import { UpdateContactDto } from './dto/update-contact.dto';
 import { SseService } from '../sse/sse.service';
 import { Roles, CurrentUser } from '../auth/auth.decorators';
 import { AuthGuard } from '../auth/auth.guard';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'; 
 
+@ApiTags('Admin - Contacts')  
+@ApiBearerAuth('JWT-auth')
 @Controller('admin/contacts')
 @UseGuards(AuthGuard)
 @Roles('ADMIN')

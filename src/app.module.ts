@@ -12,11 +12,15 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { StorageModule } from './storage/storage.module';
 import { ElapsedTimeInterceptor } from './common/interceptors/elapsed-time.interceptor';
 import { AuthModule } from './auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [PrismaModule, ToursModule, BookingsModule, FeedbacksModule, ContactsModule, SseModule, GraphqlModule, StorageModule, AuthModule.forRoot(process.env.JWT_SECRET),],
-  controllers: [AppController],
-  providers: [AppService, {
+  imports: [ConfigModule.forRoot({ 
+      isGlobal: true,
+      envFilePath: '.env',
+    }), PrismaModule, AuthModule, ToursModule, BookingsModule, FeedbacksModule, ContactsModule, SseModule, GraphqlModule, StorageModule,],
+    controllers: [AppController],
+    providers: [AppService, {
     provide: APP_INTERCEPTOR,
     useClass: ElapsedTimeInterceptor,
   },],

@@ -4,9 +4,10 @@ import { FeedbacksController } from './feedbacks.controller';
 import { PrismaModule } from '../prisma/prisma.module';
 import { SseModule } from '../sse/sse.module';
 import { FeedbacksApiController } from './feedbacks-api.controller';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [PrismaModule, SseModule],
+  imports: [AuthModule, PrismaModule, SseModule],
   controllers: [FeedbacksController, FeedbacksApiController,],
   providers: [FeedbacksService],
   exports: [FeedbacksService],

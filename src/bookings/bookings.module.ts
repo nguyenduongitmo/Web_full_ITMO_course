@@ -4,9 +4,10 @@ import { BookingsController } from './bookings.controller';
 import { PrismaModule } from '../prisma/prisma.module';
 import { SseModule } from '../sse/sse.module';
 import { BookingsApiController } from './bookings-api.controller'; 
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [PrismaModule, SseModule],
+  imports: [AuthModule, PrismaModule, SseModule],
   controllers: [BookingsController, BookingsApiController,],
   providers: [BookingsService],
   exports: [BookingsService],

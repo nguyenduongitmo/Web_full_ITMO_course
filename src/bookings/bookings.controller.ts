@@ -7,7 +7,10 @@ import { SseService } from '../sse/sse.service';
 import type { Request } from 'express';
 import { Roles, CurrentUser } from '../auth/auth.decorators';
 import { AuthGuard } from '../auth/auth.guard';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'; 
 
+@ApiTags('Admin - Bookings')  
+@ApiBearerAuth('JWT-auth')
 @Controller('admin/bookings')
 @UseGuards(AuthGuard)
 @Roles('ADMIN')  

@@ -1,9 +1,14 @@
 import { Controller, Post, Delete, UseGuards, UploadedFile, Body, Param, BadRequestException, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { StorageService } from './storage.service';
-import { ApiTags, ApiOperation, ApiConsumes, ApiBody } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiConsumes, ApiBody, ApiBearerAuth  } from '@nestjs/swagger';
+import { Roles } from '../auth/auth.decorators';
+import { AuthGuard } from '../auth/auth.guard';
 
 @ApiTags('storage')
+@ApiBearerAuth('JWT-auth')
+@Roles('ADMIN')
+@UseGuards(AuthGuard)
 @Controller('api/upload')
 export class StorageController {
     constructor(private readonly storageService: StorageService) { }

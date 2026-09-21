@@ -1,41 +1,48 @@
-import { Module, DynamicModule, Global, MiddlewareConsumer, NestModule } from '@nestjs/common';
+import { Module, Global, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { APP_GUARD } from '@nestjs/core';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthGuard, RolesGuard } from './auth.guard';
 import { AuthMiddleware } from './auth.middleware';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { PrismaService } from '../prisma/prisma.service';
-
-// auth service xử lý logic nghiệp vụ đnagư nhâp, đăng kí
+import { AuthApiController } from './auth-api.controller';
 
 @Global()
-@Module({})
-export class AuthModule implements NestModule {
-    static forRoot(secret?: string): DynamicModule {
+@Module({
+  imports: [
+    PassportModule,
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        const secret = configService.get<string>('JWT_SECRET') || 'royal-travel-secret';
+        console.log('JWT Secret (sign & verify):', secret);
         return {
-            module: AuthModule,
-            global: true,
-            imports: [
-                PassportModule,
-                JwtModule.register({
-                    secret: secret || process.env.JWT_SECRET || 'royal-travel-secret',
-                    signOptions: { expiresIn: '7d' },
-                }),
-            ],
-            controllers: [AuthController],
-            providers: [
-                AuthService,
-                PrismaService,
-                { provide: APP_GUARD, useClass: AuthGuard },
-                { provide: APP_GUARD, useClass: RolesGuard },
-            ],
-            exports: [AuthService, JwtModule],
+          secret,
+          signOptions: { expiresIn: '7d' },
         };
-    }
-
-    configure(consumer: MiddlewareConsumer) {
-        consumer.apply(AuthMiddleware).forRoutes('*');
-    }
+      },
+    }),
+  ],
+  controllers: [AuthController, AuthApiController],
+  providers: [
+    AuthService,
+    PrismaService,
+    AuthGuard,    //  Đăng ký provider
+    RolesGuard,   //  Đăng ký provider
+  ],
+  exports: [
+    AuthService,
+    JwtModule,
+    PassportModule,
+    AuthGuard,    //  Export để module khác dùng
+    RolesGuard,
+  ],
+})
+export class AuthModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(AuthMiddleware).forRoutes('*');
+  }
 }
